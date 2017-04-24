@@ -31,7 +31,15 @@ use yii\web\View;
 				],*/
 				]); ?>
 
-			<?= $form->field($model, 'ID_SOLICITANTE')->textInput() ?>
+			<?php //= $form->field($model, 'ID_SOLICITANTE')->textInput() ?>
+			
+			
+			<?php $model->nacionalidadSolicitante = 1; ?>		
+			<?php $nacionalidad = Html::activeDropDownList($model,'nacionalidadSolicitante',['0'=>'E','1'=>'V'],['class'=>'form-control','style'=>'width:50px;']); ?>
+			<?php echo $form->field($model, 'cedulaSolicitante', [
+				'inputTemplate' => '<div class="input-group"><span class="input-group-addon" style="padding:0;border:0px;">'.$nacionalidad.'</span>{input}<span class="input-group-addon" style="padding:0;"><button type="button" class="btn btn-primary" style="border-radius:0px;border:0px;">Buscar</button></span></div>',
+			])->textInput(); 
+			?>
 
 			<?= $form->field($model, 'ID_TIPO_DOCUMENTO')->dropDownList(
 				ArrayHelper::map(TIPODOCUMENTO::find()->All(), 'ID_TIPO_DOCUMENTO','DESCRIPCION'),
@@ -42,8 +50,6 @@ use yii\web\View;
 				ArrayHelper::map(TIPOSOLICITUD::find()->All(), 'ID_TIPO_SOLICITUD', 'DESCRIPCION'),
 				[
 					'prompt'=>'Seleccione',
-					//'onchange'=>'tipo_solicitud(this)'
-					//'onchange'=>'js:tipo_solicitud();'
 				]
 			)?>
 
@@ -81,10 +87,7 @@ use yii\web\View;
     
  <?php
 	 $this->registerJs(
-		"
-			
-		
-		$('#documento-id_tipo_solicitud').on('change', function() {
+		"$('#documento-id_tipo_solicitud').on('change', function() {
 			var seleccionado = $('#documento-id_tipo_solicitud').val();
 				if(seleccionado == '2'){ //Operador Financiero
 					$('#DIV_ID_BANCO').show('fade');
@@ -100,7 +103,6 @@ use yii\web\View;
 					}
 		});",
 		View::POS_READY
-		
 	);
  ?>   
 

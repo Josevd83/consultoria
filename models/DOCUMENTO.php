@@ -34,6 +34,8 @@ use Yii;
  */
 class DOCUMENTO extends \yii\db\ActiveRecord
 {
+	public $nacionalidadSolicitante;
+	public $cedulaSolicitante;
     /**
      * @inheritdoc
      */
@@ -48,8 +50,8 @@ class DOCUMENTO extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['ID_DOCUMENTO', 'ID_SOLICITANTE', 'ID_TIPO_DOCUMENTO', 'ID_TIPO_SOLICITUD', 'NUM_DOCUMENTO', 'FECHA_CREACION', 'ID_ESTATUS', 'ID_USUARIO', 'ID_ABOGADO'], 'required'],
-            [['ID_DOCUMENTO', 'ID_SOLICITANTE', 'ID_TIPO_DOCUMENTO', 'ID_TIPO_SOLICITUD', 'ID_ORGANISMO', 'ID_BANCO', 'NUM_DOCUMENTO', 'NUM_OFICIO', 'ID_ESTATUS', 'ID_USUARIO', 'ID_ABOGADO'], 'number'],
+            [['ID_DOCUMENTO', 'ID_SOLICITANTE', 'ID_TIPO_DOCUMENTO', 'ID_TIPO_SOLICITUD', 'NUM_DOCUMENTO', 'FECHA_CREACION', 'ID_ESTATUS', 'ID_USUARIO', 'ID_ABOGADO', 'cedulaSolicitante', 'nacionalidadSolicitante'], 'required'],
+            [['ID_DOCUMENTO', 'ID_SOLICITANTE', 'ID_TIPO_DOCUMENTO', 'ID_TIPO_SOLICITUD', 'ID_ORGANISMO', 'ID_BANCO', 'NUM_DOCUMENTO', 'NUM_OFICIO', 'ID_ESTATUS', 'ID_USUARIO', 'ID_ABOGADO', 'cedulaSolicitante', 'nacionalidadSolicitante'], 'number'],
             [['FECHA_CREACION', 'FECHA_MODIFICACION'], 'string'],
             [['OBSERVACIONES'], 'string', 'max' => 1000],
             [['1'], 'exist', 'skipOnError' => true, 'targetClass' => SOLICITANTE::className(), 'targetAttribute' => ['1' => 'ID_SOLICITANTE']],
@@ -83,6 +85,7 @@ class DOCUMENTO extends \yii\db\ActiveRecord
             'OBSERVACIONES' => 'Observaciones',
             'FECHA_MODIFICACION' => 'Fecha de Modificación',
             'ID_ABOGADO' => 'Abogado',
+            'cedulaSolicitante' => 'Cédula del Solicitante',
         ];
     }
 
