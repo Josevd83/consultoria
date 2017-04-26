@@ -5,6 +5,7 @@ namespace app\controllers;
 use Yii;
 use app\models\DOCUMENTO;
 use app\models\DOCUMENTOSearch;
+use app\models\SOLICITANTE;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -121,4 +122,34 @@ class DocumentoController extends Controller
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
+    
+    public function actionBuscarpersona()
+    {
+		$parametros = [':nacionalidad' => Yii::$app->request->post('nacionalidad'), ':num_cedula' => Yii::$app->request->post('num_cedula')];
+		
+		$persona = Yii::$app->db->createCommand('SELECT * FROM onidex WHERE nac=:nacionalidad AND cedula=:num_cedula')->bindValues($parametros)->queryOne();
+		//$this->layout = false;
+
+		$modelSolicitante = new SOLICITANTE();
+
+        if($persona){
+			$modelSolicitante->NACIONALIDAD = $persona['NAC'];
+			$modelSolicitante->CEDULA = $persona['CEDULA'];
+			$modelSolicitante->PRIMER_NOMBRE = $persona['PRIMERNOMBRE'];
+			$modelSolicitante->SEGUNDO_NOMBRE = $persona['SEGUNDONOMBRE'];
+			$modelSolicitante->PRIMER_APELLIDO = $persona['PRIMERAPELLIDO'];
+			$modelSolicitante->SEGUNDO_APELLIDO = $persona['SEGUNDOAPELLIDO'];
+		}
+        
+        if ($modelSolicitante->load(Yii::$app->request->post()) && $modelSolicitante->save()) {
+            return $this->redirect(['view', 'id' => $modelSolicitante->ID_SOLICITANTE]);
+        } else {
+            /*return $this->render('create', [
+                'model' => $model,
+            ]);*/
+            //return $this->render('//solicitante/_form',['model'=>$modelSolicitante]);
+            return $this->renderpartial('_formSolicitante',['modelSolicitante'=>$modelSolicitante]);
+        }
+		
+	}
 }

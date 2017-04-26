@@ -10,6 +10,7 @@ use app\models\BANCO;
 use app\models\ABOGADO;
 use yii\bootstrap\ActiveForm;
 use yii\web\View;
+use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\DOCUMENTO */
@@ -34,12 +35,15 @@ use yii\web\View;
 			<?php //= $form->field($model, 'ID_SOLICITANTE')->textInput() ?>
 			
 			
-			<?php $model->nacionalidadSolicitante = 1; ?>		
-			<?php $nacionalidad = Html::activeDropDownList($model,'nacionalidadSolicitante',['0'=>'E','1'=>'V'],['class'=>'form-control','style'=>'width:50px;']); ?>
+			<?php $model->nacionalidadSolicitante = 'V'; ?>
+			<?php $nacionalidad = Html::activeDropDownList($model,'nacionalidadSolicitante',['E'=>'E','V'=>'V'],['class'=>'form-control','style'=>'width:50px;']); ?>
 			<?php echo $form->field($model, 'cedulaSolicitante', [
-				'inputTemplate' => '<div class="input-group"><span class="input-group-addon" style="padding:0;border:0px;">'.$nacionalidad.'</span>{input}<span class="input-group-addon" style="padding:0;"><button type="button" class="btn btn-primary" style="border-radius:0px;border:0px;">Buscar</button></span></div>',
-			])->textInput(); 
+				'inputTemplate' => '<div class="input-group"><span class="input-group-addon" style="padding:0;border:0px;">'.$nacionalidad.'</span>{input}<span class="input-group-addon" style="padding:0;"><button type="button" id="buscar_cedula" class="btn btn-primary" style="border-radius:0px;border:0px;">Buscar</button></span></div>',
+			])->textInput(['maxlength'=>'9']); 
 			?>
+			
+				<div id="div_datos_persona"></div>
+			
 
 			<?= $form->field($model, 'ID_TIPO_DOCUMENTO')->dropDownList(
 				ArrayHelper::map(TIPODOCUMENTO::find()->All(), 'ID_TIPO_DOCUMENTO','DESCRIPCION'),
@@ -101,8 +105,26 @@ use yii\web\View;
 								$('#DIV_ID_BANCO').hide('fade');
 							}
 					}
+		});
+		
+		$('#buscar_cedula').on('click',function(){
+			var nacionalidad = $('#documento-nacionalidadsolicitante').val();
+			var num_cedula   = $('#documento-cedulasolicitante').val();
+				
+			$('#div_datos_persona').html('<div class=\'form-group\'><div class=\'col-sm-3\'></div><div class=\'col-sm-6\'><i class=\'fa fa-refresh fa-spin\'></i> Buscando...</div></div>');
+				
+			$.ajax({
+				type: 'POST',
+				dataType: 'html',
+				url: '".Url::toRoute("documento/buscarpersona")."',
+				data: {nacionalidad: nacionalidad, num_cedula: num_cedula},
+				success:function(data){
+					$('#div_datos_persona').html(data);
+					//$('#persona_cedula').val('');
+				}
+			}); //ajax
 		});",
-		View::POS_READY
+		View::POS_READY 
 	);
  ?>   
 
