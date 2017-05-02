@@ -9,6 +9,7 @@ use app\models\SOLICITANTE;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\Response;
 
 /**
  * DocumentoController implements the CRUD actions for DOCUMENTO model.
@@ -65,14 +66,30 @@ class DocumentoController extends Controller
     public function actionCreate()
     {
         $model = new DOCUMENTO();
+        $modelSolicitante = new SOLICITANTE();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        /*if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->ID_DOCUMENTO]);
         } else {
             return $this->render('create', [
                 'model' => $model,
             ]);
+        }*/
+        
+         if ($model->load(Yii::$app->request->post()) && $modelSolicitante->load(Yii::$app->request->post())) {
+            $isValid = $model->validate();
+            $isValid = $modelSolicitante->validate() && $isValid;
+            die('bla');
+            if ($isValid) {
+                $model->save(false);
+                $modelSolicitante->save(false);
+                return $this->redirect(['user/view', 'id' => $id]);
+            }
         }
+        return $this->render('create', [
+                'model' => $model,
+                'modelSolicitante' => $modelSolicitante,
+            ]);
     }
 
     /**
@@ -128,9 +145,11 @@ class DocumentoController extends Controller
 		$parametros = [':nacionalidad' => Yii::$app->request->post('nacionalidad'), ':num_cedula' => Yii::$app->request->post('num_cedula')];
 		
 		$persona = Yii::$app->db->createCommand('SELECT * FROM onidex WHERE nac=:nacionalidad AND cedula=:num_cedula')->bindValues($parametros)->queryOne();
-		//$this->layout = false;
+		$this->layout = false;
 
 		$modelSolicitante = new SOLICITANTE();
+		
+		Yii::$app->response->format = Response::FORMAT_JSON;
 
         if($persona){
 			$modelSolicitante->NACIONALIDAD = $persona['NAC'];
@@ -139,17 +158,16 @@ class DocumentoController extends Controller
 			$modelSolicitante->SEGUNDO_NOMBRE = $persona['SEGUNDONOMBRE'];
 			$modelSolicitante->PRIMER_APELLIDO = $persona['PRIMERAPELLIDO'];
 			$modelSolicitante->SEGUNDO_APELLIDO = $persona['SEGUNDOAPELLIDO'];
+			$resultado = $modelSolicitante;
+			//$disable = true;
 		}
-        
-        if ($modelSolicitante->load(Yii::$app->request->post()) && $modelSolicitante->save()) {
-            return $this->redirect(['view', 'id' => $modelSolicitante->ID_SOLICITANTE]);
-        } else {
-            /*return $this->render('create', [
-                'model' => $model,
-            ]);*/
-            //return $this->render('//solicitante/_form',['model'=>$modelSolicitante]);
-            return $this->renderpartial('_formSolicitante',['modelSolicitante'=>$modelSolicitante]);
-        }
-		
+		else{
+			$resultado = 0;
+		}
+			//$disable = false;
+				
+            //return $this->renderpartial('_formSolicitante',['modelSolicitante'=>$modelSolicitante,'disable'=>$disable]);
+            //return $this->render('_formSolicitante',['modelSolicitante'=>$modelSolicitante,'disable'=>$disable]);
+		return $resultado;
 	}
 }

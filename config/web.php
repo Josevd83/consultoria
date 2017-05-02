@@ -55,13 +55,19 @@ $config = [
              ],
          ],
     	],*/
-        
+        'authManager' => [
+            'class' => 'yii\rbac\DbManager',
+        ],
     ],
+    
     'params' => $params,
     'modules' => [
-	'gridview' => [
-		'class' => '\kartik\grid\Module'
-	]
+		'gridview' => [
+			'class' => '\kartik\grid\Module'
+		],
+		'auth' => [
+			'class'=>'app\modules\auth\Module'
+		]
     ],
 ];
 

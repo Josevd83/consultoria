@@ -37,11 +37,12 @@ class SOLICITANTE extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['ID_SOLICITANTE'], 'required'],
-            [['ID_SOLICITANTE', 'CEDULA', 'COD_TELEFONO', 'NRO_TELEFONO'], 'number'],
+            [['ID_SOLICITANTE','CEDULA','NRO_TELEFONO','PRIMER_NOMBRE', 'PRIMER_APELLIDO','CORREO_ELECTRONICO'], 'required'],
+            [['ID_SOLICITANTE', 'CEDULA', 'COD_TELEFONO'/*, 'NRO_TELEFONO'*/], 'number'],
             [['NACIONALIDAD'], 'string', 'max' => 1],
             [['PRIMER_NOMBRE', 'SEGUNDO_NOMBRE', 'PRIMER_APELLIDO', 'SEGUNDO_APELLIDO'], 'string', 'max' => 40],
             [['CORREO_ELECTRONICO'], 'string', 'max' => 80],
+            [['CORREO_ELECTRONICO'],'email'],
         ];
     }
 
@@ -60,7 +61,7 @@ class SOLICITANTE extends \yii\db\ActiveRecord
             'SEGUNDO_APELLIDO' => 'Segundo  Apellido',
             'COD_TELEFONO' => 'Cod  Telefono',
             'NRO_TELEFONO' => 'Nro  Telefono',
-            'CORREO_ELECTRONICO' => 'Correo  Electronico',
+            'CORREO_ELECTRONICO' => 'Correo  Electrónico',
         ];
     }
 
