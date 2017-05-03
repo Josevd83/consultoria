@@ -36,7 +36,7 @@ use yii\helpers\Url;
 			
 			
 			<?php $model->nacionalidadSolicitante = 'V'; ?>
-			<?php $nacionalidad = Html::activeDropDownList($model,'nacionalidadSolicitante',['E'=>'E','V'=>'V'],['class'=>'form-control','style'=>'width:50px;']); ?>
+			<?php $nacionalidad = Html::activeDropDownList($model,'nacionalidadSolicitante',['E'=>'E','V'=>'V'],['class'=>'form-control','style'=>'width:55px;']); ?>
 			<?php echo $form->field($model, 'cedulaSolicitante', [
 				'inputTemplate' => '<div class="input-group"><span class="input-group-addon" style="padding:0;border:0px;">'.$nacionalidad.'</span>{input}<span class="input-group-addon" style="padding:0;"><button type="button" id="buscar_cedula" class="btn btn-primary" style="border-radius:0px;border:0px;">Buscar</button></span></div>',
 			])->textInput(['maxlength'=>'9']); 
@@ -62,7 +62,7 @@ use yii\helpers\Url;
 								<?php //= $form->field($modelSolicitante, 'COD_TELEFONO',['template'=>'<div class="col-sm-4">{label}{input}{error}{hint}</div>','options'=>['tag'=>null]])->textInput() ?>
 
 								<?php //$modelSolicitante->COD_TELEFONO = '0416'; ?>
-								<?php $codigoTelefono = Html::activeDropDownList($modelSolicitante,'COD_TELEFONO',['0212'=>'0212','0416'=>'0416','0426'=>'0426'],['class'=>'form-control','style'=>'width:70px;']); ?>
+								<?php $codigoTelefono = Html::activeDropDownList($modelSolicitante,'COD_TELEFONO',['0212'=>'0212','0416'=>'0416','0426'=>'0426'],['class'=>'form-control','style'=>'width:75px;']); ?>
 								<?= $form->field($modelSolicitante, 'NRO_TELEFONO',['inputTemplate' => '<div class="input-group"><span class="input-group-addon" style="padding:0;border:0px;">'.$codigoTelefono.'</span>{input}</div>'])
 											->textInput()
 											//->label(null,['id'=>'labelnro_telefono'])

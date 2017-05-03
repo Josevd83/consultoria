@@ -65,6 +65,7 @@ class DocumentoController extends Controller
      */
     public function actionCreate()
     {
+		
         $model = new DOCUMENTO();
         $modelSolicitante = new SOLICITANTE();
 
@@ -76,7 +77,12 @@ class DocumentoController extends Controller
             ]);
         }*/
         
+         if($modelSolicitante->load(Yii::$app->request->post())){
+				die('Llegando');
+		 }
+         
          if ($model->load(Yii::$app->request->post()) && $modelSolicitante->load(Yii::$app->request->post())) {
+			//var_dump($model);die(); 
             $isValid = $model->validate();
             $isValid = $modelSolicitante->validate() && $isValid;
             die('bla');
@@ -152,6 +158,10 @@ class DocumentoController extends Controller
 		Yii::$app->response->format = Response::FORMAT_JSON;
 
         if($persona){
+			
+			if(!isset($persona['SEGUNDONOMBRE'])){$persona['SEGUNDONOMBRE'] = '';}
+			if(!isset($persona['SEGUNDOAPELLIDO'])){$persona['SEGUNDOAPELLIDO'] = '';}
+			
 			$modelSolicitante->NACIONALIDAD = $persona['NAC'];
 			$modelSolicitante->CEDULA = $persona['CEDULA'];
 			$modelSolicitante->PRIMER_NOMBRE = $persona['PRIMERNOMBRE'];
