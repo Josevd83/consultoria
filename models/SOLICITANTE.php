@@ -80,4 +80,11 @@ class SOLICITANTE extends \yii\db\ActiveRecord
     {
         return $this->hasMany(DOCUMENTO::className(), ['1' => 'ID_SOLICITANTE']);
     }
+    
+    public function getNextVal(){
+		$query = new \yii\db\Query;
+        $query->select('SOLICITANTE_SEQ.NEXTVAL')->from('DUAL');
+        $rows = $query->all();
+        return $rows[0]['NEXTVAL'];
+	}
 }

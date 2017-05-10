@@ -20,6 +20,8 @@ use yii\helpers\Url;
 	<div class="box-body">
 		<?php $form = ActiveForm::begin([
 				'layout' => 'horizontal',
+				//'enableAjaxValidation'=>true,
+				//'enableClientValidation'=>true,
 				/*'fieldConfig' => [
 					'template' => "{label}\n{beginWrapper}\n{input}\n{hint}\n{error}\n{endWrapper}",
 					'horizontalCssClasses' => [
@@ -51,6 +53,9 @@ use yii\helpers\Url;
 								<h4>Datos del Solicitante</h4>
 							</div>
 							<div class="box-body">
+								
+								<?= $form->field($model, 'ID_DOCUMENTO')->hiddenInput(['value'=>$model->ID_DOCUMENTO]) ?>
+								
 								<?= $form->field($modelSolicitante, 'PRIMER_NOMBRE')->textInput(['maxlength' => true]) ?>
 
 								<?= $form->field($modelSolicitante, 'SEGUNDO_NOMBRE')->textInput(['maxlength' => true]) ?>
@@ -79,13 +84,15 @@ use yii\helpers\Url;
 				</div>
 			
 				<div style="padding:10px;"></div>
+				
+			<?= $form->field($model, 'NUM_DOCUMENTO', ['enableAjaxValidation' => true])->textInput(['readonly' => true]) ?>
 
 			<?= $form->field($model, 'ID_TIPO_DOCUMENTO')->dropDownList(
 				ArrayHelper::map(TIPODOCUMENTO::find()->All(), 'ID_TIPO_DOCUMENTO','DESCRIPCION'),
 				['prompt'=>'Seleccione']
 			)?>
 
-			<?= $form->field($model, 'ID_TIPO_SOLICITUD')->dropDownList(
+			<?= $form->field($model, 'ID_TIPO_SOLICITUD', ['enableAjaxValidation' => true])->dropDownList(
 				ArrayHelper::map(TIPOSOLICITUD::find()->All(), 'ID_TIPO_SOLICITUD', 'DESCRIPCION'),
 				[
 					'prompt'=>'Seleccione',
@@ -93,7 +100,7 @@ use yii\helpers\Url;
 			)?>
 
 			<div id='DIV_ID_ORGANISMO' style="display: none">
-				<?= $form->field($model, 'ID_ORGANISMO')->dropDownList(
+				<?= $form->field($model, 'ID_ORGANISMO', ['enableAjaxValidation' => true])->dropDownList(
 					ArrayHelper::map(ORGANISMO::find()->All(), 'ID_ORGANISMO', 'DESCRIPCION'),
 					['prompt' => 'Seleccione']
 				) ?>
@@ -101,13 +108,11 @@ use yii\helpers\Url;
 			
 
 			<div id='DIV_ID_BANCO' style="display: none">
-				<?= $form->field($model, 'ID_BANCO')->dropDownList(
+				<?= $form->field($model, 'ID_BANCO', ['enableAjaxValidation' => true])->dropDownList(
 					ArrayHelper::map(BANCO::find()->All(), 'ID_BANCO', 'DESCRIPCION'),
 					['prompt' => 'Seleccione']
 				) ?>
 			</div>
-
-			<?= $form->field($model, 'NUM_DOCUMENTO')->textInput() ?>
 
 			<?= $form->field($model, 'NUM_OFICIO')->textInput() ?>
 
@@ -119,7 +124,7 @@ use yii\helpers\Url;
 			) ?>
 	</div><!--box-body-->
     <div class="box-footer text-center">
-        <?= Html::submitButton($model->isNewRecord ? 'Crear Trámite' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary'/*, 'onclick'=>'validarInput("boton")'*/]) ?>
+        <?= Html::submitButton($model->isNewRecord ? 'Crear Trámite' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary', 'id'=>'botonSubmit']) ?>
     </div>
 
     <?php ActiveForm::end(); ?>
@@ -192,6 +197,16 @@ use yii\helpers\Url;
 					}
 				}
 			}); //ajax
+		})
+		
+		$('#botonSubmit').on('click',function(){
+			var resultado = true;
+			if($('#div_datos_persona').css('display')=='none'){
+				$('.field-documento-cedulasolicitante').addClass('has-error');
+				$('.field-documento-cedulasolicitante').find('.help-block').html('Debe consultar e ingresar los datos del solicitante');
+				resultado = false;
+			}
+			return resultado;
 		});",
 		View::POS_READY 
 	);
@@ -200,7 +215,7 @@ use yii\helpers\Url;
 		if(clase == 'boton'){
 			var result = true;
 			if($('.field-solicitante-primer_nombre').find('input').val()==''){
-				$('.field-solicitante-primer_nombre').addClass('has-error');
+				c
 				$('.field-solicitante-primer_nombre').find('.help-block').html('No puede estar vacío');
 				result = false;
 			}

@@ -90,4 +90,9 @@ class ABOGADO extends \yii\db\ActiveRecord
     {
         return $this->hasOne(USUARIO::className(), ['ID_USUARIO' => '1']);
     }
+    
+    public function getEstatus()
+    {
+        return $this->hasOne(ESTATUS::className(), ['ID_ESTATUS' => 'ID_ESTATUS']);
+    }
 }

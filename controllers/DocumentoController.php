@@ -10,6 +10,11 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\Response;
+use yii\db\Expression;
+use yii\widgets\ActiveForm;
+use yii\helpers\Json;
+use yii\helpers\Html;
+use kartik\widgets\Growl;
 
 /**
  * DocumentoController implements the CRUD actions for DOCUMENTO model.
@@ -77,21 +82,81 @@ class DocumentoController extends Controller
             ]);
         }*/
         
-         if($modelSolicitante->load(Yii::$app->request->post())){
+         /*if($modelSolicitante->load(Yii::$app->request->post())){
+			 
+			 
+			 
+			
 				die('Llegando');
-		 }
-         
+		 }*/
+		 
+		 
+		 if (Yii::$app->request->isAjax && $model->load(Yii::$app->request->post())) {
+				Yii::$app->response->format = Response::FORMAT_JSON;
+				return ActiveForm::validate($model);
+			}
+
+
          if ($model->load(Yii::$app->request->post()) && $modelSolicitante->load(Yii::$app->request->post())) {
-			//var_dump($model);die(); 
-            $isValid = $model->validate();
-            $isValid = $modelSolicitante->validate() && $isValid;
-            die('bla');
-            if ($isValid) {
+			 $modelSolicitante->validate();
+			 //Se verifica que la persona exista en la tabla solicitante
+			 $consultaSolicitante = SOLICITANTE::find()->where(['CEDULA'=>$model->cedulaSolicitante, 'NACIONALIDAD'=>$model->nacionalidadSolicitante])->one();
+			 if(!$consultaSolicitante){
+				 $numero_tlf = explode("-",$modelSolicitante->NRO_TELEFONO);
+				 $numero_tlf = $numero_tlf[0].$numero_tlf[1];
+				//echo $lastInsertID = $db->getLastInsertID();
+				//$modelSolicitante = new SOLICITANTE();
+				//echo $modelSolicitante->ID_SOLICITANTE;
+				//die($modelSolicitante->NRO_TELEFONO);
+				$modelSolicitante->ID_SOLICITANTE = $modelSolicitante->getNextVal();
+				$modelSolicitante->NACIONALIDAD = $model->nacionalidadSolicitante;
+				$modelSolicitante->CEDULA = $model->cedulaSolicitante;
+				$modelSolicitante->NRO_TELEFONO = $numero_tlf;
+				//var_dump($modelSolicitante->getNextVal());//die;
+				$modelSolicitante->save(false);
+			}
+				//return $this->redirect(['solicitante/view', 'id' => $modelSolicitante->ID_SOLICITANTE]);
+					/*if($modelSolicitante->validate()){
+							echo "Validado";
+					}
+					echo "No existe";*/
+
+			//var_dump($consultaSolicitante);die();
+			//$model->ID_DOCUMENTO = $model->getNextVal();
+			$model->ID_DOCUMENTO = $model->ID_DOCUMENTO;
+			$model->ID_SOLICITANTE = ($modelSolicitante->ID_SOLICITANTE)?$modelSolicitante->ID_SOLICITANTE:$consultaSolicitante->ID_SOLICITANTE;
+			$model->FECHA_CREACION = new Expression('SYSDATE');
+			$model->ID_ESTATUS = 1;
+			$model->ID_USUARIO = 1;
+			$model->validate();
+			//var_dump($model->NUM_DOCUMENTO);
+			//die('paso');
+			//var_dump($model);
+			if($model->save(false)){
+				Yii::$app->getSession()->setFlash('success', [
+					'type' => Growl::TYPE_SUCCESS,
+					'icon' => 'fa fa-users',
+					'message' => Html::encode('Documento ha sido creado exitósamente'),
+					'title' => Html::encode('Resultado'),
+					'showSeparator' => true,
+					
+				]);
+				return $this->redirect(['view', 'id' => $model->ID_DOCUMENTO]);
+			}
+            //$isValid = $model->validate();
+            //$isValid = $modelSolicitante->validate() && $isValid;
+            //die('bla');
+            /*if ($isValid) {
                 $model->save(false);
                 $modelSolicitante->save(false);
                 return $this->redirect(['user/view', 'id' => $id]);
-            }
+            }*/
         }
+        
+        //$model->ID_DOCUMENTO = $model->getNextVal();
+        if(empty($model->ID_DOCUMENTO)){$model->ID_DOCUMENTO = $model->getNextVal();}
+        $model->NUM_DOCUMENTO = $model->ID_DOCUMENTO.date('dmY');
+         
         return $this->render('create', [
                 'model' => $model,
                 'modelSolicitante' => $modelSolicitante,
@@ -129,6 +194,28 @@ class DocumentoController extends Controller
 
         return $this->redirect(['index']);
     }
+    
+    public function actionEliminar() 
+{
+	//Yii::$app->response->format = Response::FORMAT_JSON;
+	//die('Llegando');
+		//$model = new DOCUMENTO;
+		$post = Yii::$app->request->post();   
+		// process ajax delete
+		if (Yii::$app->request->isAjax && isset($post['kvdelete'])) {
+			$model = $this->findModel($post['id']);
+			$model->delete();
+			echo Json::encode([
+				'success' => true,
+				'messages' => [
+					'kv-detail-info' => 'El Documento N° '.$model->NUM_DOCUMENTO.' fué eliminado exitósamente. ' . 
+						Html::a('<i class="glyphicon glyphicon-hand-right"></i>  Click aquí', 
+							['index'], ['class' => 'btn btn-sm btn-info']) . ' para continuar.'
+				]
+			]);
+			return;
+		}
+}
 
     /**
      * Finds the DOCUMENTO model based on its primary key value.

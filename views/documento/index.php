@@ -50,6 +50,7 @@ $this->params['breadcrumbs'][] = $this->title;
 	    'filterModel' => $searchModel,
 	    'columns' => [
 		    'ID_DOCUMENTO',
+		    'NUM_DOCUMENTO',
 		    'ID_SOLICITANTE',
 		    'ID_TIPO_DOCUMENTO',
 		    'ID_TIPO_SOLICITUD',

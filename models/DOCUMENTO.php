@@ -54,14 +54,17 @@ class DOCUMENTO extends \yii\db\ActiveRecord
             [['ID_DOCUMENTO', 'ID_SOLICITANTE', 'ID_TIPO_DOCUMENTO', 'ID_TIPO_SOLICITUD', 'ID_ORGANISMO', 'ID_BANCO', 'NUM_DOCUMENTO', 'NUM_OFICIO', 'ID_ESTATUS', 'ID_USUARIO', 'ID_ABOGADO', 'cedulaSolicitante', 'nacionalidadSolicitante'], 'number'],
             [['FECHA_CREACION', 'FECHA_MODIFICACION'], 'string'],
             [['OBSERVACIONES'], 'string', 'max' => 1000],
-            [['1'], 'exist', 'skipOnError' => true, 'targetClass' => SOLICITANTE::className(), 'targetAttribute' => ['1' => 'ID_SOLICITANTE']],
+            [['NUM_DOCUMENTO'], 'unico'],
+            [['ID_TIPO_SOLICITUD','ID_BANCO','ID_ORGANISMO'], 'solicitudSeleccionada'],
+            //[['ID_TIPO_DOCUMENTO'], 'exist'],
+            /*[['1'], 'exist', 'skipOnError' => true, 'targetClass' => SOLICITANTE::className(), 'targetAttribute' => ['1' => 'ID_SOLICITANTE']],
             [['1'], 'exist', 'skipOnError' => true, 'targetClass' => TIPODOCUMENTO::className(), 'targetAttribute' => ['1' => 'ID_TIPO_DOCUMENTO']],
             [['1'], 'exist', 'skipOnError' => true, 'targetClass' => TIPOSOLICITUD::className(), 'targetAttribute' => ['1' => 'ID_TIPO_SOLICITUD']],
             [['1'], 'exist', 'skipOnError' => true, 'targetClass' => ORGANISMO::className(), 'targetAttribute' => ['1' => 'ID_ORGANISMO']],
             [['1'], 'exist', 'skipOnError' => true, 'targetClass' => BANCO::className(), 'targetAttribute' => ['1' => 'ID_BANCO']],
             [['1'], 'exist', 'skipOnError' => true, 'targetClass' => ESTATUS::className(), 'targetAttribute' => ['1' => 'ID_ESTATUS']],
             [['1'], 'exist', 'skipOnError' => true, 'targetClass' => USUARIO::className(), 'targetAttribute' => ['1' => 'ID_USUARIO']],
-            [['1'], 'exist', 'skipOnError' => true, 'targetClass' => ABOGADO::className(), 'targetAttribute' => ['1' => 'ID_ABOGADO']],
+            [['1'], 'exist', 'skipOnError' => true, 'targetClass' => ABOGADO::className(), 'targetAttribute' => ['1' => 'ID_ABOGADO']],*/
         ];
     }
 
@@ -159,5 +162,66 @@ class DOCUMENTO extends \yii\db\ActiveRecord
     public function get16()
     {
         return $this->hasOne(ABOGADO::className(), ['ID_ABOGADO' => '1']);
+    }
+    
+    public function getNextVal(){
+		$query = new \yii\db\Query;
+        $query->select('DOCUMENTO_SEQ.NEXTVAL')->from('DUAL');
+        $rows = $query->all();
+        return $rows[0]['NEXTVAL'];
+	}
+	
+	public function unico($attribute, $params)
+	{
+		//$num_documento = DOCUMENTO::find()->where(['NUM_DOCUMENTO'=>$this->$attribute])->count();
+		$num_documento = DOCUMENTO::find()->where(['NUM_DOCUMENTO'=>$this->NUM_DOCUMENTO])->count();
+		if($num_documento > 0){
+			$this->addError('NUM_DOCUMENTO', 'El número de documento "'.$this->NUM_DOCUMENTO.'" ya se encuentra registrado');
+		}
+	}
+	
+	public function solicitudSeleccionada($attribute, $params)
+	{
+		$tipo_solicitud = $this->ID_TIPO_SOLICITUD;
+		switch($tipo_solicitud){
+			case 2:
+				if(!$this->ID_BANCO)
+					$this->addError('ID_BANCO', 'Debe Seleccionar el Banco');
+			break;
+			case 3:
+				if(!$this->ID_ORGANISMO)
+					$this->addError('ID_ORGANISMO', 'Debe Seleccionar el Organismo');
+			break;
+		}
+	}
+	
+	public function getSolicitante()
+    {
+        return $this->hasOne(SOLICITANTE::className(), ['ID_SOLICITANTE' => 'ID_SOLICITANTE']);
+    }
+    
+    public function getTipoDocumento()
+    {
+        return $this->hasOne(TIPODOCUMENTO::className(), ['ID_TIPO_DOCUMENTO' => 'ID_TIPO_DOCUMENTO']);
+    }
+    
+    public function getTipoSolicitud()
+    {
+        return $this->hasOne(TIPOSOLICITUD::className(), ['ID_TIPO_SOLICITUD' => 'ID_TIPO_SOLICITUD']);
+    }
+    
+    public function getAbogado()
+    {
+        return $this->hasOne(ABOGADO::className(), ['ID_ABOGADO' => 'ID_ABOGADO']);
+    }
+    
+    public function getBanco()
+    {
+        return $this->hasOne(BANCO::className(), ['ID_BANCO' => 'ID_BANCO']);
+    }
+    
+    public function getOrganismo()
+    {
+        return $this->hasOne(ORGANISMO::className(), ['ID_ORGANISMO' => 'ID_ORGANISMO']);
     }
 }
