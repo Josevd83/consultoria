@@ -54,7 +54,7 @@ use yii\helpers\Url;
 							</div>
 							<div class="box-body">
 								
-								<?= $form->field($model, 'ID_DOCUMENTO')->hiddenInput(['value'=>$model->ID_DOCUMENTO]) ?>
+								<?= $form->field($model, 'ID_DOCUMENTO')->hiddenInput(['value'=>$model->ID_DOCUMENTO])->label(false); ?>
 								
 								<?= $form->field($modelSolicitante, 'PRIMER_NOMBRE')->textInput(['maxlength' => true]) ?>
 

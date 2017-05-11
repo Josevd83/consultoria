@@ -1,7 +1,6 @@
 <?php
 
 use yii\helpers\Html;
-//use yii\widgets\DetailView;
 use kartik\detail\DetailView;
 use yii\helpers\Url;
 use kartik\widgets\Growl;
@@ -15,66 +14,9 @@ $this->params['breadcrumbs'][] = ['label' => 'Documentos', 'url' => ['index']];
 //$this->params['breadcrumbs'][] = $this->title;
 ?>
 
-<?php foreach (Yii::$app->session->getAllFlashes() as $message):; ?>
-	<?php
-		echo \kartik\widgets\Growl::widget([
-			//'type' => (!empty($message['type'])) ? $message['type'] : 'danger',
-			'type' => (!empty($message['type'])) ? $message['type'] : Growl::TYPE_SUCCESS,
-			'title' => (!empty($message['title'])) ? Html::encode($message['title']) : 'Title Not Set!',
-			'icon' => (!empty($message['icon'])) ? $message['icon'] : 'fa fa-info',
-			'body' => (!empty($message['message'])) ? Html::encode($message['message']) : 'Message Not Set!',
-			'showSeparator' => true,
-			'delay' => 1, //This delay is how long before the message shows
-			'pluginOptions' => [
-				'delay' => (!empty($message['duration'])) ? $message['duration'] : 3000, //This delay is how long the message shows for
-				'showProgressbar' => (!empty($message['showProgressbar'])) ? $message['showProgressbar'] : true,
-				'placement' => [
-					'from' => (!empty($message['positonY'])) ? $message['positonY'] : 'top',
-					'align' => (!empty($message['positonX'])) ? $message['positonX'] : 'right',
-					
-				]
-			]
-		]);
-	?>
-<?php endforeach; ?>
 
 <div class="documento-view">
 
-    <!--<h1><?= Html::encode($this->title) ?></h1>-->
-
-    <p>
-        <?= Html::a('Modificar', ['update', 'id' => $model->ID_DOCUMENTO], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Eliminar', ['delete', 'id' => $model->ID_DOCUMENTO], [
-            'class' => 'btn btn-danger',
-            'data' => [
-                'confirm' => '¿Está seguro de eliminar este documento?',
-                'method' => 'post',
-            ],
-        ]) ?>
-        <?= Html::a('Ver Listado', ['index'],['class'=>'btn btn-warning'])?>
-        <?= Html::a('Crear Nuevo Documento',['create'], ['class'=>'btn btn-success']) ?>
-    </p>
-
-    <?php /*echo DetailView::widget([
-        'model' => $model,
-        'attributes' => [
-            'ID_DOCUMENTO',
-            'ID_SOLICITANTE',
-            'ID_TIPO_DOCUMENTO',
-            'ID_TIPO_SOLICITUD',
-            'ID_ORGANISMO',
-            'ID_BANCO',
-            'NUM_DOCUMENTO',
-            'FECHA_CREACION',
-            'NUM_OFICIO',
-            'ID_ESTATUS',
-            'ID_USUARIO',
-            'OBSERVACIONES',
-            'FECHA_MODIFICACION',
-            'ID_ABOGADO',
-            'solicitante.NACIONALIDAD',
-        ],
-    ])*/ ?>
     
     <?php if($model->ID_TIPO_SOLICITUD == 2 || $model->ID_TIPO_SOLICITUD == 3)
     {
@@ -505,14 +447,7 @@ $this->params['breadcrumbs'][] = ['label' => 'Documentos', 'url' => ['index']];
 				'responsive' =>true,
 				'hover' => true,
 				'fadeDelay'=>800,
-				//'enableEditMode'=>false
-				'buttons1'=>Html::a('', ['/documento/update','id'=>$model->ID_DOCUMENTO], ['class'=>'kv-action-btn glyphicon glyphicon-pencil']) .'{delete}',
-				'deleteOptions'=>[
-									//'url'=>Url::to(['documento/delete/', 'id'=>$model->ID_DOCUMENTO]),
-									'url'=>'eliminar',
-									'params'=>['id'=>$model->ID_DOCUMENTO, 'kvdelete'=>true],
-									'confirm'=>'¿Está seguro de eliminar este documento?'
-								 ],
+				'enableEditMode'=>false,
 			])
 		
     ?>
