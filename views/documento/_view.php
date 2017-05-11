@@ -7,11 +7,6 @@ use kartik\widgets\Growl;
 use app\models\DOCUMENTO;
 /* @var $this yii\web\View */
 /* @var $model app\models\DOCUMENTO */
-
-//$this->title = $model->ID_DOCUMENTO;
-$this->title = 'Detalle del Documento';
-$this->params['breadcrumbs'][] = ['label' => 'Documentos', 'url' => ['index']];
-//$this->params['breadcrumbs'][] = $this->title;
 ?>
 
 
