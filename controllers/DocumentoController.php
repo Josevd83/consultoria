@@ -190,10 +190,11 @@ class DocumentoController extends Controller
      */
     public function actionDelete($id)
     {
-		sleep(2);
+		//sleep(2);
+		//echo "hola";
 		//Yii::$app->response->format = Response::FORMAT_JSON;
 		//die('Llegando');
-        $this->findModel($id)->delete();
+       $this->findModel($id)->delete();
 //return true;
 /*echo Json::encode([
 				'success' => true,
@@ -212,7 +213,7 @@ return;
 	//Yii::$app->response->format = Response::FORMAT_JSON;
 	//die('Llegando');
 		//$model = new DOCUMENTO;
-		$post = Yii::$app->request->post();   
+		$post = Yii::$app->request->post();
 		// process ajax delete
 		if (Yii::$app->request->isAjax && isset($post['kvdelete'])) {
 			$model = $this->findModel($post['id']);

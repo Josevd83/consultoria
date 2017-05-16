@@ -182,14 +182,18 @@ $this->params['breadcrumbs'][] = $this->title;
         'filterRowOptions'=>['class'=>'kartik-sheet-style'],
         'pjax'=>true, // pjax is set to always true for this demo
         'pjaxSettings'=>[
-			'neverTimeout'=>true,
+			'neverTimeout'=>false,
 			//'beforeGrid'=>'My fancy content before.',
 			//'afterGrid'=>'My fancy content after.',
 		],
         'toolbar'=> [
 			['content'=>
 				Html::button('<i class="glyphicon glyphicon-plus"></i>', ['type'=>'button', 'title'=>'Agregar', 'class'=>'btn btn-success', 'onclick'=>'alert("This will launch the book creation form.\n\nDisabled for this demo!");']) . ' '.
-				Html::a('<i class="glyphicon glyphicon-repeat"></i>', ['grid-demo'], ['data-pjax'=>0, 'class'=>'btn btn-default', 'title'=>'Agregar'])
+				//Html::button('<i class="glyphicon glyphicon-repeat"></i>', ['type'=>'button', 'data-pjax'=>0, 'class'=>'btn btn-default', 'title'=>'Refrescar', 'id'=>'refrescar']).
+				//Html::a('<i class="glyphicon glyphicon-repeat"></i>', ['grid-demo'], ['data-pjax'=>0, 'class'=>'btn btn-default', 'title'=>'Agregar'])
+				Html::button('<i class="glyphicon glyphicon-repeat"></i>', ['type'=>'button', 'title'=>'Agregar', 'class'=>'btn btn-default', 'onclick'=>"
+				$.pjax.reload({container:'#kv-grid-demo-pjax'});
+				"])
 			],
 			'{export}',
 			'{toggleData}',
@@ -211,44 +215,14 @@ $this->params['breadcrumbs'][] = $this->title;
 	    'exportConfig'=>true,
 ]);
     ?>
+
 <?php Pjax::end(); ?>
 </div>
 
 <?php
-$this->registerJs(
-		"$('#eliminarDoc').click(function(){
-			var url = $(this).attr('href') ,row = $(this).closest('tr'), cell = $(this).closest('td');
-			krajeeDialog.confirm('¿Esta seguro de eliminar el documento?', function(result){
-				if(result) {
-					
-					//alert(url);
-					$.ajax({
-                            url: url,
-                            type: 'post',
-                            //dataType: 'text',
-                            beforeSend: function() {
-                                row.addClass('kv-delete-row');
-                                cell.addClass('kv-delete-cell');
-                            },
-                            complete: function () {
-                                row.removeClass('kv-delete-row');
-                                cell.removeClass('kv-delete-cell');
-                            },
-                            error: function (xhr, status, error) {
-                                //krajeeDialog.alert('There was an error with your request.' + xhr.responseText);
-                                krajeeDialog.alert('Hubo un error');
-                            }
-                        }).done(function (data) {
-                            //$.pjax.reload({container: '#' + kv-grid-demo-pjax.pjaxContainer});
-                            krajeeDialog.alert('Documento eliminado exitósamente');
-							$.pjax.reload({container: '#kv-grid-demo-pjax'});
-								//$.pjax.reload({container: '#kv-grid-demo-pjax'});
-                            //alert('Lo hizo');
-                        });
-				}
-			});
-			return false;
-			});",
-		View::POS_READY
-	);
+$this->registerJsFile(
+    '@web/js/gridTramite.js',
+    ['depends' => [\yii\web\JqueryAsset::className()]]
+);
 ?>
+
