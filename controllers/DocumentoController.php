@@ -190,9 +190,21 @@ class DocumentoController extends Controller
      */
     public function actionDelete($id)
     {
+		sleep(2);
+		//Yii::$app->response->format = Response::FORMAT_JSON;
+		//die('Llegando');
         $this->findModel($id)->delete();
-
-        return $this->redirect(['index']);
+//return true;
+/*echo Json::encode([
+				'success' => true,
+				'messages' => [
+					'kv-detail-info' => 'El Documento N°  fué eliminado exitósamente. ' . 
+						Html::a('<i class="glyphicon glyphicon-hand-right"></i>  Click aquí', 
+							['index'], ['class' => 'btn btn-sm btn-info']) . ' para continuar.'
+				]
+			]);*/
+return;
+        //return $this->redirect(['index']);
     }
     
     public function actionEliminar() 

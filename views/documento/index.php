@@ -8,6 +8,8 @@ use app\models\TIPODOCUMENTO;
 use app\models\TIPOSOLICITUD;
 use app\models\SOLICITANTE;
 use app\models\ABOGADO;
+use yii\widgets\Pjax;
+use yii\web\View;
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\DOCUMENTOSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -48,7 +50,7 @@ $this->params['breadcrumbs'][] = $this->title;
             ['class' => 'yii\grid\ActionColumn'],
         ],
     ]); */ ?>
-
+<?php Pjax::begin(); ?>
 	<?php
 		$gridColumns = [
 							//'ID_DOCUMENTO',
@@ -138,11 +140,28 @@ $this->params['breadcrumbs'][] = $this->title;
 								'class'=>'kartik\grid\ActionColumn',
 								//'dropdown'=>$this->dropdown,
 								//'dropdownOptions'=>['class'=>'pull-right'],
-								//'urlCreator'=>function($action, $model, $key, $index) { return $action; },
+								//'urlCreator'=>function($action, $model, $key, $index) { return '#'; },
 								'viewOptions'=>['title'=>'Ver Detalle', 'data-toggle'=>'tooltip'],
 								'updateOptions'=>['title'=>'Modificar el Documento', 'data-toggle'=>'tooltip'],
 								'deleteOptions'=>['title'=>'Eliminar Documento', 'data-toggle'=>'tooltip'],
 								'headerOptions'=>['class'=>'kartik-sheet-style'],
+								'template'=>'{view}{update}{delete}',
+								'buttons'=>[
+												'delete' => function ($url, $model) {
+																  return Html::a('<span class="glyphicon glyphicon-trash"></span>', $url,
+
+																	  [  
+																		 //'title' => Yii::t('yii', 'delete'),
+																		 'title'=> "Eliminar Documento",
+																		 'id'=>'eliminarDoc',
+																		 //'data-confirm' => "Are you sure you want to delete this item?",
+																		 'data-method' => 'post',
+																		 //'data-pjax' => true,
+																		 //'data-pjax-container'=>"kv-grid-demo-pjax",
+																		 //'data-toggle'=>"tooltip"
+																	  ]);
+															 }
+										   ],
 							],
 							[
 								'class'=>'kartik\grid\CheckboxColumn',
@@ -160,15 +179,20 @@ $this->params['breadcrumbs'][] = $this->title;
 	    'hover'=>true,
 	    'containerOptions'=>['style'=>'overflow: auto'], // only set when $responsive = false
 	    'headerRowOptions'=>['class'=>'kartik-sheet-style'],
-            'filterRowOptions'=>['class'=>'kartik-sheet-style'],
-            'pjax'=>true, // pjax is set to always true for this demo
-            'toolbar'=> [
-		['content'=>
-		    Html::button('<i class="glyphicon glyphicon-plus"></i>', ['type'=>'button', 'title'=>'Agregar', 'class'=>'btn btn-success', 'onclick'=>'alert("This will launch the book creation form.\n\nDisabled for this demo!");']) . ' '.
-		    Html::a('<i class="glyphicon glyphicon-repeat"></i>', ['grid-demo'], ['data-pjax'=>0, 'class'=>'btn btn-default', 'title'=>'Agregar'])
+        'filterRowOptions'=>['class'=>'kartik-sheet-style'],
+        'pjax'=>true, // pjax is set to always true for this demo
+        'pjaxSettings'=>[
+			'neverTimeout'=>true,
+			//'beforeGrid'=>'My fancy content before.',
+			//'afterGrid'=>'My fancy content after.',
 		],
-		'{export}',
-		'{toggleData}',
+        'toolbar'=> [
+			['content'=>
+				Html::button('<i class="glyphicon glyphicon-plus"></i>', ['type'=>'button', 'title'=>'Agregar', 'class'=>'btn btn-success', 'onclick'=>'alert("This will launch the book creation form.\n\nDisabled for this demo!");']) . ' '.
+				Html::a('<i class="glyphicon glyphicon-repeat"></i>', ['grid-demo'], ['data-pjax'=>0, 'class'=>'btn btn-default', 'title'=>'Agregar'])
+			],
+			'{export}',
+			'{toggleData}',
 	    ],
             'export'=>[
 		'fontAwesome'=>true
@@ -187,4 +211,44 @@ $this->params['breadcrumbs'][] = $this->title;
 	    'exportConfig'=>true,
 ]);
     ?>
+<?php Pjax::end(); ?>
 </div>
+
+<?php
+$this->registerJs(
+		"$('#eliminarDoc').click(function(){
+			var url = $(this).attr('href') ,row = $(this).closest('tr'), cell = $(this).closest('td');
+			krajeeDialog.confirm('¿Esta seguro de eliminar el documento?', function(result){
+				if(result) {
+					
+					//alert(url);
+					$.ajax({
+                            url: url,
+                            type: 'post',
+                            //dataType: 'text',
+                            beforeSend: function() {
+                                row.addClass('kv-delete-row');
+                                cell.addClass('kv-delete-cell');
+                            },
+                            complete: function () {
+                                row.removeClass('kv-delete-row');
+                                cell.removeClass('kv-delete-cell');
+                            },
+                            error: function (xhr, status, error) {
+                                //krajeeDialog.alert('There was an error with your request.' + xhr.responseText);
+                                krajeeDialog.alert('Hubo un error');
+                            }
+                        }).done(function (data) {
+                            //$.pjax.reload({container: '#' + kv-grid-demo-pjax.pjaxContainer});
+                            krajeeDialog.alert('Documento eliminado exitósamente');
+							$.pjax.reload({container: '#kv-grid-demo-pjax'});
+								//$.pjax.reload({container: '#kv-grid-demo-pjax'});
+                            //alert('Lo hizo');
+                        });
+				}
+			});
+			return false;
+			});",
+		View::POS_READY
+	);
+?>
