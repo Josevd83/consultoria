@@ -15,6 +15,8 @@ use yii\widgets\ActiveForm;
 use yii\helpers\Json;
 use yii\helpers\Html;
 use kartik\widgets\Growl;
+use app\models\MOVIMIENTO;
+use app\models\TIPODOCUMENTOPASOS;
 
 /**
  * DocumentoController implements the CRUD actions for DOCUMENTO model.
@@ -74,6 +76,7 @@ class DocumentoController extends Controller
         $model = new DOCUMENTO();
         $modelSolicitante = new SOLICITANTE();
 
+
         /*if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->ID_DOCUMENTO]);
         } else {
@@ -98,6 +101,11 @@ class DocumentoController extends Controller
 
 
          if ($model->load(Yii::$app->request->post()) && $modelSolicitante->load(Yii::$app->request->post())) {
+			 
+			 
+			 
+			 
+			 
 			 $modelSolicitante->validate();
 			 //Se verifica que la persona exista en la tabla solicitante
 			 $consultaSolicitante = SOLICITANTE::find()->where(['CEDULA'=>$model->cedulaSolicitante, 'NACIONALIDAD'=>$model->nacionalidadSolicitante])->one();
@@ -132,7 +140,38 @@ class DocumentoController extends Controller
 			//var_dump($model->NUM_DOCUMENTO);
 			//die('paso');
 			//var_dump($model);
-			if($model->save(false)){
+			$model->save(false);
+			
+			
+			/////////////////////////////////////////////////////////
+			//TIPO MOVIMIENTO PASOS
+			////////////////////////////////////////////////////////
+			$modelTipoDocumentoPasos = TIPODOCUMENTOPASOS::find()->where(['NRO_PASO'=>1])->one();
+			
+			$modelMovimiento = new MOVIMIENTO;
+			$modelMovimiento->ID_MOVIMIENTO = $modelMovimiento->getNextVal();
+			$modelMovimiento->ID_DOCUMENTO = $model->ID_DOCUMENTO;
+			$modelMovimiento->ID_ESTATUS = $modelTipoDocumentoPasos->ID_ESTATUS;
+			$modelMovimiento->ID_DEPARTAMENTO = $modelTipoDocumentoPasos->ID_DEPARTAMENTO;
+			$modelMovimiento->ID_USUARIO = 1; //modificar
+			$modelMovimiento->ID_SOLICITANTE = $modelSolicitante->ID_SOLICITANTE;
+			$modelMovimiento->ID_TIPO_MOVIMIENTO = $modelTipoDocumentoPasos->ID_TIPO_MOVIMIENTO;
+			$modelMovimiento->ID_TIPO_DOCUMENTO = $modelTipoDocumentoPasos->ID_TIPO_DOCUMENTO;
+			$modelMovimiento->ID_PASO = $modelTipoDocumentoPasos->ID_PASO;
+			$modelMovimiento->NRO_PASO = $modelTipoDocumentoPasos->NRO_PASO;
+			$modelMovimiento->DESCRIPCION_PASO = $modelTipoDocumentoPasos->DESCRIPCION_PASO;
+			$modelMovimiento->OBSERVACIONES = $model->OBSERVACIONES;
+			$modelMovimiento->FECHA_CREACION = new Expression('SYSDATE');
+			//$modelMovimiento->FECHA_MODIFICACION = new Expression('SYSDATE');
+			
+			//var_dump($modelMovimiento);
+			//die('Llegando');
+			/////////////////////////////////////////////////////////
+			//TIPO MOVIMIENTO PASOS
+			////////////////////////////////////////////////////////
+			
+			//if($model->save(false)){
+			if($modelMovimiento->save(false)){
 				Yii::$app->getSession()->setFlash('success', [
 					'type' => Growl::TYPE_SUCCESS,
 					'icon' => 'fa fa-users',
@@ -171,7 +210,7 @@ class DocumentoController extends Controller
      */
     public function actionUpdate($id)
     {
-        $model = $this->findModel($id);
+        /*$model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->ID_DOCUMENTO]);
@@ -179,7 +218,93 @@ class DocumentoController extends Controller
             return $this->render('update', [
                 'model' => $model,
             ]);
+        }*/
+        
+        $model = $this->findModel($id);
+        
+        $modelSolicitante = SOLICITANTE::findOne($model->ID_SOLICITANTE);
+        
+        if (Yii::$app->request->isAjax && $model->load(Yii::$app->request->post())) {
+				Yii::$app->response->format = Response::FORMAT_JSON;
+				return ActiveForm::validate($model);
+		}
+		
+		if ($model->load(Yii::$app->request->post()) && $modelSolicitante->load(Yii::$app->request->post())) {
+			 $modelSolicitante->validate();
+			 //Se verifica que la persona exista en la tabla solicitante
+			 $consultaSolicitante = SOLICITANTE::find()->where(['CEDULA'=>$model->cedulaSolicitante, 'NACIONALIDAD'=>$model->nacionalidadSolicitante])->one();
+			 /*if(!$consultaSolicitante){
+				 $numero_tlf = explode("-",$modelSolicitante->NRO_TELEFONO);
+				 $numero_tlf = $numero_tlf[0].$numero_tlf[1];
+				//echo $lastInsertID = $db->getLastInsertID();
+				//$modelSolicitante = new SOLICITANTE();
+				//echo $modelSolicitante->ID_SOLICITANTE;
+				//die($modelSolicitante->NRO_TELEFONO);
+				//$modelSolicitante->ID_SOLICITANTE = $modelSolicitante->getNextVal();
+				$modelSolicitante->NACIONALIDAD = $model->nacionalidadSolicitante;
+				$modelSolicitante->CEDULA = $model->cedulaSolicitante;
+				$modelSolicitante->NRO_TELEFONO = $numero_tlf;
+				//var_dump($modelSolicitante->getNextVal());//die;
+				$modelSolicitante->save(false);
+			}*/
+			$modelSolicitante->NACIONALIDAD = $model->nacionalidadSolicitante;
+			$modelSolicitante->CEDULA = $model->cedulaSolicitante;
+			$modelSolicitante->save(false);
+				//return $this->redirect(['solicitante/view', 'id' => $modelSolicitante->ID_SOLICITANTE]);
+					/*if($modelSolicitante->validate()){
+							echo "Validado";
+					}
+					echo "No existe";*/
+
+			//var_dump($consultaSolicitante);die();
+			//$model->ID_DOCUMENTO = $model->getNextVal();
+			$model->ID_DOCUMENTO = $model->ID_DOCUMENTO;
+			$model->ID_SOLICITANTE = ($modelSolicitante->ID_SOLICITANTE)?$modelSolicitante->ID_SOLICITANTE:$consultaSolicitante->ID_SOLICITANTE;
+			$model->FECHA_CREACION = new Expression('SYSDATE');
+			$model->ID_ESTATUS = 1;
+			$model->ID_USUARIO = 1;
+			$model->validate();
+			//var_dump($model->NUM_DOCUMENTO);
+			//die('paso');
+			//var_dump($model);
+			if($model->save(false)){
+				Yii::$app->getSession()->setFlash('success', [
+					'type' => Growl::TYPE_SUCCESS,
+					'icon' => 'fa fa-users',
+					'message' => Html::encode('Documento actualizado correctamente'),
+					'title' => Html::encode('Resultado'),
+					'showSeparator' => true,
+					
+				]);
+				return $this->redirect(['view', 'id' => $model->ID_DOCUMENTO]);
+			}
+            //$isValid = $model->validate();
+            //$isValid = $modelSolicitante->validate() && $isValid;
+            //die('bla');
+            /*if ($isValid) {
+                $model->save(false);
+                $modelSolicitante->save(false);
+                return $this->redirect(['user/view', 'id' => $id]);
+            }*/
+        }else {
+            return $this->render('update', [
+                'model' => $model,
+                'modelSolicitante' => $modelSolicitante,
+            ]);
         }
+        
+        //var_dump($consultaSolicitante);
+        //die();
+        //$modelSolicitante = ;
+        
+        /*if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            return $this->redirect(['view', 'id' => $model->ID_DOCUMENTO]);
+        } else {
+            return $this->render('update', [
+                'model' => $model,
+                'modelSolicitante' => $modelSolicitante,
+            ]);
+        }*/
     }
 
     /**

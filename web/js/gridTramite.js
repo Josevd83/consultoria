@@ -23,13 +23,79 @@ $(document).on({
                                 krajeeDialog.alert('Hubo un error');
                             },
                             success: function(){
-								$.pjax.reload({container: '#kv-grid-demo-pjax'});
-								//krajeeDialog.alert('Documento eliminado exitósamente');
+								/*bootbox.alert({
+									message: "I'm the first!",
+									callback: function () { $.pjax.reload({container: '#kv-grid-demo-pjax'}); }
+								});*/
+								
 								//$.pjax.reload({container: '#kv-grid-demo-pjax'});
+								//krajeeDialog.alert('Documento eliminado exitósamente');
+								
+								/*krajeeDialog.alert({
+									message: "Documento eliminado exitósamente",
+									callback: function () { $.pjax.reload({container: '#kv-grid-demo-pjax'}); }
+								});*/
+								
+								//alert('Documento eliminado exitósamente');
+								/*setTimeout(function(){
+									krajeeDialog.alert('Documento eliminado exitósamente');
+								},50);*/
+								//$.pjax.reload({container: '#kv-grid-demo-pjax'});
+								
+								/*function msgSuccess(callback){
+									krajeeDialog.alert('Documento eliminado exitósamente');
+									callback();
+								}
+								msgSuccess(function(){
+									//$.pjax.reload({container: '#kv-grid-demo-pjax'});
+								});*/
+								
+								/*krajeeDialog.confirm('Documento eliminado exitósamente, ¿Desea refrescar el listado?',function(resultdo){
+									if(resultdo){$.pjax.reload({container: '#kv-grid-demo-pjax'});}
+								});*/
+								
+								/*var dialogInstance3 = new BootstrapDialog()
+								.setTitle('Dialog instance 3')
+								.setMessage('Hi Everybody!')
+								.setType(BootstrapDialog.TYPE_INFO)
+								.setButtons: [ {
+										label: 'Close',
+										action: function(dialogItself){
+											dialogItself.close();
+											$.pjax.reload({container: '#kv-grid-demo-pjax'});
+										}
+									}]
+								.open();*/
+								
+								var dialog = new BootstrapDialog({
+									message: 'Documento eliminado exitósamente',
+									type: BootstrapDialog.TYPE_INFO,
+									title: 'Información',
+									buttons: [{
+										id: 'btn-1',
+										label: 'Ok',
+										action: function(dialogItself){
+											dialogItself.close();
+											$.pjax.reload({container: '#kv-grid-demo-pjax'});
+										}
+									}]
+								});
+								dialog.open();
+								
+								/*BootstrapDialog.show({
+									message: 'Documento eliminado exitósamente',
+									buttons: [ {
+										label: 'Close',
+										action: function(dialogItself){
+											dialogItself.close();
+											$.pjax.reload({container: '#kv-grid-demo-pjax'});
+										}
+									}]
+								});*/					
 							}
                         }).done(function (data) {
                             //$.pjax.reload({container: '#' + kv-grid-demo-pjax.pjaxContainer});
-                            krajeeDialog.alert('Documento eliminado exitósamente');
+                            //krajeeDialog.alert('Documento eliminado exitósamente');
 							//$.pjax.reload({container: '#kv-grid-demo-pjax'});
 								//$.pjax.reload({container: '#kv-grid-demo-pjax'});
                             //alert('Lo hizo');

@@ -4,9 +4,9 @@ use yii\helpers\Html;
 use yii\grid\GridView;
 
 /* @var $this yii\web\View */
-/* @var $searchModel app\models\DepartamentoSearch */
+/* @var $searchModel app\models\DEPARTAMENTOSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
-//var_dump($this->params);
+
 $this->title = 'Departamentos';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
@@ -30,18 +30,5 @@ $this->params['breadcrumbs'][] = $this->title;
 
             ['class' => 'yii\grid\ActionColumn'],
         ],
-'tableOptions' => ['class'=>'table table-striped table-bordered DataTable'],
-'options' => ['class'=>'box-body'],
     ]); ?>
 </div>
-
-
-<?=
-\yiister\adminlte\widgets\grid\GridView::widget(
-    [
-        "dataProvider" => $dataProvider,
-        "condensed" => true,
-        "hover" => true,
-    ]
-);
-?>
