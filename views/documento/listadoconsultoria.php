@@ -170,6 +170,7 @@ $this->params['breadcrumbs'][] = $this->title;
 					   ]
 	?>
 
+	<?php $model-> ?>
     <?= GridView::widget([
 	    'id' => 'kv-grid-demo',
 	    'dataProvider'=> $dataProvider,

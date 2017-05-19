@@ -102,10 +102,6 @@ class DocumentoController extends Controller
 
          if ($model->load(Yii::$app->request->post()) && $modelSolicitante->load(Yii::$app->request->post())) {
 			 
-			 
-			 
-			 
-			 
 			 $modelSolicitante->validate();
 			 //Se verifica que la persona exista en la tabla solicitante
 			 $consultaSolicitante = SOLICITANTE::find()->where(['CEDULA'=>$model->cedulaSolicitante, 'NACIONALIDAD'=>$model->nacionalidadSolicitante])->one();
@@ -122,7 +118,7 @@ class DocumentoController extends Controller
 				$modelSolicitante->NRO_TELEFONO = $numero_tlf;
 				//var_dump($modelSolicitante->getNextVal());//die;
 				$modelSolicitante->save(false);
-			}
+			}else{$modelSolicitante = $consultaSolicitante;}
 				//return $this->redirect(['solicitante/view', 'id' => $modelSolicitante->ID_SOLICITANTE]);
 					/*if($modelSolicitante->validate()){
 							echo "Validado";
@@ -144,7 +140,7 @@ class DocumentoController extends Controller
 			
 			
 			/////////////////////////////////////////////////////////
-			//TIPO MOVIMIENTO PASOS
+			//MOVIMIENTO
 			////////////////////////////////////////////////////////
 			$modelTipoDocumentoPasos = TIPODOCUMENTOPASOS::find()->where(['NRO_PASO'=>1])->one();
 			
@@ -167,7 +163,7 @@ class DocumentoController extends Controller
 			//var_dump($modelMovimiento);
 			//die('Llegando');
 			/////////////////////////////////////////////////////////
-			//TIPO MOVIMIENTO PASOS
+			//MOVIMIENTO
 			////////////////////////////////////////////////////////
 			
 			//if($model->save(false)){
@@ -405,4 +401,16 @@ return;
             //return $this->render('_formSolicitante',['modelSolicitante'=>$modelSolicitante,'disable'=>$disable]);
 		return $resultado;
 	}
+	
+	public function actionListadoconsultoria()
+    {
+		
+        $searchModel = new DOCUMENTOSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        return $this->render('listadoconsultoria', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
+    }
 }

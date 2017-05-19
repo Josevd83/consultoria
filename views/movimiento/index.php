@@ -8,50 +8,26 @@ use app\models\TIPODOCUMENTO;
 use app\models\TIPOSOLICITUD;
 use app\models\SOLICITANTE;
 use app\models\ABOGADO;
+use app\models\DOCUMENTO;
 use yii\widgets\Pjax;
 use yii\web\View;
-/* @var $this yii\web\View */
-/* @var $searchModel app\models\DOCUMENTOSearch */
-/* @var $dataProvider yii\data\ActiveDataProvider */
-//var_dump($this->params);
-$this->title = 'Documentos';
-$this->params['breadcrumbs'][] = $this->title;
-//$this->params['breadcrumbs'][] = ['label' => 'Documentos', 'url' => ['index']];
-?>
-<div class="documento-index">
 
-    <!--<h1><?= Html::encode($this->title) ?></h1>-->
+/* @var $this yii\web\View */
+/* @var $searchModel app\models\MOVIMIENTOSearch */
+/* @var $dataProvider yii\data\ActiveDataProvider */
+
+$this->title = 'Movimientos';
+$this->params['breadcrumbs'][] = $this->title;
+?>
+<div class="movimiento-index">
+
+    <h1><?= Html::encode($this->title) ?></h1>
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <p>
-        <?= Html::a('Crear Nuevo Documento', ['create'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a('Create Movimiento', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
-    <?php /*= GridView::widget([
-        'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
-        'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
-
-            'ID_DOCUMENTO',
-            'ID_SOLICITANTE',
-            'ID_TIPO_DOCUMENTO',
-            'ID_TIPO_SOLICITUD',
-            'ID_ORGANISMO',
-            // 'ID_BANCO',
-            // 'NUM_DOCUMENTO',
-            // 'FECHA_CREACION',
-            // 'NUM_OFICIO',
-            // 'ID_ESTATUS',
-            // 'ID_USUARIO',
-            // 'OBSERVACIONES',
-            // 'FECHA_MODIFICACION',
-            // 'ID_ABOGADO',
-
-            ['class' => 'yii\grid\ActionColumn'],
-        ],
-    ]); */ ?>
-<?php Pjax::begin(); ?>
-	<?php
+    <?php 
 		$gridColumns = [
 							//'ID_DOCUMENTO',
 							[
@@ -66,7 +42,24 @@ $this->params['breadcrumbs'][] = $this->title;
 								'headerOptions'=>['class'=>'kartik-sheet-style'] ,
 								'expandOneOnly'=>true
 							],
-							'NUM_DOCUMENTO',
+							//'NUM_DOCUMENTO',
+							/*[
+								'attribute'=>'ID_DOCUMENTO',
+								'label'=>'Número del Documento',
+								'enableSorting' => true,
+								'vAlign'=>'middle',
+								'value'=>function ($model, $key, $index, $widget) { 
+									//return Html::a($model->tipoDocumento->DESCRIPCION, '#', ['title'=>'View author detail', 'onclick'=>'alert("This will open the author page.\n\nDisabled for this demo!")']);
+									return $model->documento->NUM_DOCUMENTO;
+								},
+								'filterType'=>GridView::FILTER_SELECT2,
+								'filter'=>ArrayHelper::map(DOCUMENTO::find()->orderBy('ID_DOCUMENTO DESC')->asArray()->all(), 'ID_DOCUMENTO', 'NUM_DOCUMENTO'), 
+								'filterWidgetOptions'=>[
+									'pluginOptions'=>['allowClear'=>true],
+								],
+								'filterInputOptions'=>['placeholder'=>'Seleccione'],
+								'format'=>'raw',
+							],*/
 							//'ID_SOLICITANTE',
 							[
 								'attribute'=>'ID_SOLICITANTE',
@@ -76,6 +69,7 @@ $this->params['breadcrumbs'][] = $this->title;
 								'value'=>function ($model, $key, $index, $widget) { 
 									//return Html::a($model->tipoDocumento->DESCRIPCION, '#', ['title'=>'View author detail', 'onclick'=>'alert("This will open the author page.\n\nDisabled for this demo!")']);
 									return $model->solicitante->CEDULA;
+									//return 123;
 								},
 								'filterType'=>GridView::FILTER_SELECT2,
 								'filter'=>ArrayHelper::map(SOLICITANTE::find()->orderBy('CEDULA')->asArray()->all(), 'ID_SOLICITANTE', 'CEDULA'), 
@@ -103,11 +97,12 @@ $this->params['breadcrumbs'][] = $this->title;
 								'format'=>'raw',
 							],
 							[
-								'attribute'=>'ID_TIPO_SOLICITUD',
+								'attribute'=>'tipo_solicitud',
 								'vAlign'=>'middle',
 								//'width'=>'180px',
 								'value'=>function ($model, $key, $index, $widget) { 
-									return $model->tipoSolicitud->DESCRIPCION;
+									//return $model->documento->ID_DOCUMENTO;
+									return $model->documento->tipoSolicitud->DESCRIPCION;
 								},
 								'filterType'=>GridView::FILTER_SELECT2,
 								'filter'=>ArrayHelper::map(TIPOSOLICITUD::find()->orderBy('DESCRIPCION')->asArray()->all(), 'ID_TIPO_SOLICITUD', 'DESCRIPCION'), 
@@ -117,7 +112,7 @@ $this->params['breadcrumbs'][] = $this->title;
 								'filterInputOptions'=>['placeholder'=>'Seleccione'],
 								'format'=>'raw',
 							],
-							[
+							/*[
 								'attribute'=>'ID_ABOGADO',
 								'vAlign'=>'middle',
 								'label'=>'Cédula del Abogado',
@@ -133,7 +128,7 @@ $this->params['breadcrumbs'][] = $this->title;
 								],
 								'filterInputOptions'=>['placeholder'=>'Seleccione'],
 								'format'=>'raw',
-							],
+							],*/
 							//'ID_TIPO_SOLICITUD',
 							//'ID_ORGANISMO',
 							[
@@ -169,7 +164,6 @@ $this->params['breadcrumbs'][] = $this->title;
 							],
 					   ]
 	?>
-
     <?= GridView::widget([
 	    'id' => 'kv-grid-demo',
 	    'dataProvider'=> $dataProvider,
@@ -216,13 +210,4 @@ $this->params['breadcrumbs'][] = $this->title;
 	    'exportConfig'=>true,
 ]);
     ?>
-
-<?php Pjax::end(); ?>
 </div>
-
-<?php
-$this->registerJsFile(
-    '@web/js/gridTramite.js',
-    ['depends' => [\yii\web\JqueryAsset::className()]]
-);
-?>

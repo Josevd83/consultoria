@@ -71,19 +71,19 @@ class MOVIMIENTO extends \yii\db\ActiveRecord
     {
         return [
             'ID_MOVIMIENTO' => 'Id  Movimiento',
-            'ID_DOCUMENTO' => 'Id  Documento',
-            'ID_ESTATUS' => 'Id  Estatus',
-            'ID_DEPARTAMENTO' => 'Id  Departamento',
-            'ID_USUARIO' => 'Id  Usuario',
-            'ID_SOLICITANTE' => 'Id  Solicitante',
-            'ID_TIPO_MOVIMIENTO' => 'Id  Tipo  Movimiento',
-            'ID_TIPO_DOCUMENTO' => 'Id  Tipo  Documento',
-            'ID_PASO' => 'Id  Paso',
-            'NRO_PASO' => 'Nro  Paso',
-            'DESCRIPCION_PASO' => 'Descripcion  Paso',
+            'ID_DOCUMENTO' => 'Documento',
+            'ID_ESTATUS' => 'Estatus',
+            'ID_DEPARTAMENTO' => 'Departamento',
+            'ID_USUARIO' => 'Usuario',
+            'ID_SOLICITANTE' => 'Solicitante',
+            'ID_TIPO_MOVIMIENTO' => 'Tipo de Movimiento',
+            'ID_TIPO_DOCUMENTO' => 'Tipo de Documento',
+            'ID_PASO' => 'Paso',
+            'NRO_PASO' => 'Nro de Paso',
+            'DESCRIPCION_PASO' => 'Descripción del Paso',
             'OBSERVACIONES' => 'Observaciones',
-            'FECHA_CREACION' => 'Fecha  Creacion',
-            'FECHA_MODIFICACION' => 'Fecha  Modificacion',
+            'FECHA_CREACION' => 'Fecha de Creación',
+            'FECHA_MODIFICACION' => 'Fecha de Modificación',
         ];
     }
 
@@ -165,4 +165,20 @@ class MOVIMIENTO extends \yii\db\ActiveRecord
         $rows = $query->all();
         return $rows[0]['NEXTVAL'];
 	}
+	
+	public function getSolicitante()
+    {
+        return $this->hasOne(SOLICITANTE::className(), ['ID_SOLICITANTE' => 'ID_SOLICITANTE']);
+    }
+    
+    public function getTipoDocumento()
+    {
+        return $this->hasOne(TIPODOCUMENTO::className(), ['ID_TIPO_DOCUMENTO' => 'ID_TIPO_DOCUMENTO']);
+    }
+    
+    public function getDocumento()
+    {
+        return $this->hasOne(DOCUMENTO::className(), ['ID_DOCUMENTO' => 'ID_DOCUMENTO']);
+    }
+    
 }

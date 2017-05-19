@@ -1,57 +1,28 @@
 <?php
 
 use yii\helpers\Html;
-//use yii\grid\GridView;
 use kartik\grid\GridView;
 use yii\helpers\ArrayHelper;
+use app\models\SOLICITANTE;
 use app\models\TIPODOCUMENTO;
 use app\models\TIPOSOLICITUD;
-use app\models\SOLICITANTE;
+use app\models\DOCUMENTO;
 use app\models\ABOGADO;
-use yii\widgets\Pjax;
-use yii\web\View;
+//use yii\grid\GridView;
+
 /* @var $this yii\web\View */
-/* @var $searchModel app\models\DOCUMENTOSearch */
+/* @var $searchModel app\models\VISTAMOVIMIENTOSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
-//var_dump($this->params);
-$this->title = 'Documentos';
+
+$this->title = 'Listado de Documentos';
 $this->params['breadcrumbs'][] = $this->title;
-//$this->params['breadcrumbs'][] = ['label' => 'Documentos', 'url' => ['index']];
 ?>
-<div class="documento-index">
+<div class="vistamovimiento-index">
 
-    <!--<h1><?= Html::encode($this->title) ?></h1>-->
+    <h1><?= Html::encode($this->title) ?></h1>
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
-
-    <p>
-        <?= Html::a('Crear Nuevo Documento', ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
-    <?php /*= GridView::widget([
-        'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
-        'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
-
-            'ID_DOCUMENTO',
-            'ID_SOLICITANTE',
-            'ID_TIPO_DOCUMENTO',
-            'ID_TIPO_SOLICITUD',
-            'ID_ORGANISMO',
-            // 'ID_BANCO',
-            // 'NUM_DOCUMENTO',
-            // 'FECHA_CREACION',
-            // 'NUM_OFICIO',
-            // 'ID_ESTATUS',
-            // 'ID_USUARIO',
-            // 'OBSERVACIONES',
-            // 'FECHA_MODIFICACION',
-            // 'ID_ABOGADO',
-
-            ['class' => 'yii\grid\ActionColumn'],
-        ],
-    ]); */ ?>
-<?php Pjax::begin(); ?>
-	<?php
+    
+    <?php 
 		$gridColumns = [
 							//'ID_DOCUMENTO',
 							[
@@ -66,7 +37,24 @@ $this->params['breadcrumbs'][] = $this->title;
 								'headerOptions'=>['class'=>'kartik-sheet-style'] ,
 								'expandOneOnly'=>true
 							],
-							'NUM_DOCUMENTO',
+							//'NUM_DOCUMENTO',
+							[
+								'attribute'=>'ID_DOCUMENTO',
+								'label'=>'Número del Documento',
+								'enableSorting' => true,
+								'vAlign'=>'middle',
+								'value'=>function ($model, $key, $index, $widget) { 
+									//return Html::a($model->tipoDocumento->DESCRIPCION, '#', ['title'=>'View author detail', 'onclick'=>'alert("This will open the author page.\n\nDisabled for this demo!")']);
+									return $model->documento->NUM_DOCUMENTO;
+								},
+								'filterType'=>GridView::FILTER_SELECT2,
+								'filter'=>ArrayHelper::map(DOCUMENTO::find()->orderBy('ID_DOCUMENTO DESC')->asArray()->all(), 'ID_DOCUMENTO', 'NUM_DOCUMENTO'), 
+								'filterWidgetOptions'=>[
+									'pluginOptions'=>['allowClear'=>true],
+								],
+								'filterInputOptions'=>['placeholder'=>'Seleccione'],
+								'format'=>'raw',
+							],
 							//'ID_SOLICITANTE',
 							[
 								'attribute'=>'ID_SOLICITANTE',
@@ -76,6 +64,7 @@ $this->params['breadcrumbs'][] = $this->title;
 								'value'=>function ($model, $key, $index, $widget) { 
 									//return Html::a($model->tipoDocumento->DESCRIPCION, '#', ['title'=>'View author detail', 'onclick'=>'alert("This will open the author page.\n\nDisabled for this demo!")']);
 									return $model->solicitante->CEDULA;
+									//return 123;
 								},
 								'filterType'=>GridView::FILTER_SELECT2,
 								'filter'=>ArrayHelper::map(SOLICITANTE::find()->orderBy('CEDULA')->asArray()->all(), 'ID_SOLICITANTE', 'CEDULA'), 
@@ -107,6 +96,7 @@ $this->params['breadcrumbs'][] = $this->title;
 								'vAlign'=>'middle',
 								//'width'=>'180px',
 								'value'=>function ($model, $key, $index, $widget) { 
+									//return $model->documento->ID_DOCUMENTO;
 									return $model->tipoSolicitud->DESCRIPCION;
 								},
 								'filterType'=>GridView::FILTER_SELECT2,
@@ -167,62 +157,53 @@ $this->params['breadcrumbs'][] = $this->title;
 								'class'=>'kartik\grid\CheckboxColumn',
 								'headerOptions'=>['class'=>'kartik-sheet-style'],
 							],
-					   ]
+					   ];
 	?>
-
+    
     <?= GridView::widget([
-	    'id' => 'kv-grid-demo',
-	    'dataProvider'=> $dataProvider,
-	    'filterModel' => $searchModel,
-	    'columns' => $gridColumns,
-	    'responsive'=>true,
-	    'hover'=>true,
-	    'containerOptions'=>['style'=>'overflow: auto'], // only set when $responsive = false
-	    'headerRowOptions'=>['class'=>'kartik-sheet-style'],
-        'filterRowOptions'=>['class'=>'kartik-sheet-style'],
-        'pjax'=>true, // pjax is set to always true for this demo
-        'pjaxSettings'=>[
-			'neverTimeout'=>false,
-			//'beforeGrid'=>'My fancy content before.',
-			//'afterGrid'=>'My fancy content after.',
-		],
-        'toolbar'=> [
-			['content'=>
-				Html::a('<i class="glyphicon glyphicon-plus"></i>', ['create'],['title'=>'Crear Nuevo Documento', 'class'=>'btn btn-success']) . ' '.
-				//Html::button('<i class="glyphicon glyphicon-plus"></i>', ['type'=>'button', 'title'=>'Crear Nuevo Documento', 'class'=>'btn btn-success', 'onclick'=>'alert("This will launch the book creation form.\n\nDisabled for this demo!");']) . ' '.
-				//Html::button('<i class="glyphicon glyphicon-repeat"></i>', ['type'=>'button', 'data-pjax'=>0, 'class'=>'btn btn-default', 'title'=>'Refrescar', 'id'=>'refrescar']).
-				//Html::a('<i class="glyphicon glyphicon-repeat"></i>', ['grid-demo'], ['data-pjax'=>0, 'class'=>'btn btn-default', 'title'=>'Agregar'])
-				Html::button('<i class="glyphicon glyphicon-repeat"></i>', ['type'=>'button', 'title'=>'Agregar', 'class'=>'btn btn-default', 'onclick'=>"
-				$.pjax.reload({container:'#kv-grid-demo-pjax'});
-				"])
+			'id' => 'kv-grid-demo',
+			'dataProvider'=> $dataProvider,
+			'filterModel' => $searchModel,
+			'columns' => $gridColumns,
+			'responsive'=>true,
+			'hover'=>true,
+			'containerOptions'=>['style'=>'overflow: auto'], // only set when $responsive = false
+			'headerRowOptions'=>['class'=>'kartik-sheet-style'],
+			'filterRowOptions'=>['class'=>'kartik-sheet-style'],
+			'pjax'=>true, // pjax is set to always true for this demo
+			'pjaxSettings'=>[
+				'neverTimeout'=>false,
+				//'beforeGrid'=>'My fancy content before.',
+				//'afterGrid'=>'My fancy content after.',
 			],
-			'{export}',
-			'{toggleData}',
-	    ],
-            'export'=>[
-		'fontAwesome'=>true
-	    ],
-	    'bordered'=>true,
-	    'striped'=>true,
-	    'condensed'=>true,
-	    'responsive'=>true,
-	    'hover'=>true,
-	    'showPageSummary'=>true,
-	    'panel'=>[
-		'type'=>GridView::TYPE_PRIMARY,
-		'heading'=>'<i class="glyphicon glyphicon-book"></i>  Documentos',
-	    ],
-	    'persistResize'=>false,
-	    'exportConfig'=>true,
-]);
+			'toolbar'=> [
+				['content'=>
+					Html::a('<i class="glyphicon glyphicon-plus"></i>', ['create'],['title'=>'Crear Nuevo Documento', 'class'=>'btn btn-success']) . ' '.
+					//Html::button('<i class="glyphicon glyphicon-plus"></i>', ['type'=>'button', 'title'=>'Crear Nuevo Documento', 'class'=>'btn btn-success', 'onclick'=>'alert("This will launch the book creation form.\n\nDisabled for this demo!");']) . ' '.
+					//Html::button('<i class="glyphicon glyphicon-repeat"></i>', ['type'=>'button', 'data-pjax'=>0, 'class'=>'btn btn-default', 'title'=>'Refrescar', 'id'=>'refrescar']).
+					//Html::a('<i class="glyphicon glyphicon-repeat"></i>', ['grid-demo'], ['data-pjax'=>0, 'class'=>'btn btn-default', 'title'=>'Agregar'])
+					Html::button('<i class="glyphicon glyphicon-repeat"></i>', ['type'=>'button', 'title'=>'Agregar', 'class'=>'btn btn-default', 'onclick'=>"
+					$.pjax.reload({container:'#kv-grid-demo-pjax'});
+					"])
+				],
+				'{export}',
+				'{toggleData}',
+			],
+				'export'=>[
+			'fontAwesome'=>true
+			],
+			'bordered'=>true,
+			'striped'=>true,
+			'condensed'=>true,
+			'responsive'=>true,
+			'hover'=>true,
+			'showPageSummary'=>true,
+			'panel'=>[
+			'type'=>GridView::TYPE_PRIMARY,
+			'heading'=>'<i class="glyphicon glyphicon-book"></i>  Documentos',
+			],
+			'persistResize'=>false,
+			'exportConfig'=>true,
+		]);
     ?>
-
-<?php Pjax::end(); ?>
 </div>
-
-<?php
-$this->registerJsFile(
-    '@web/js/gridTramite.js',
-    ['depends' => [\yii\web\JqueryAsset::className()]]
-);
-?>

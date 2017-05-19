@@ -61,7 +61,10 @@
                         ],
                     ],
                     ['label' => 'Departamento', 'icon' => 'file-code-o', 'url' => ['/departamento']],
-		    ['label' => 'Trámites', 'icon' => 'file-code-o', 'url' => ['/documento']],
+					['label' => 'Trámites Presidencia', 'icon' => 'file-code-o', 'url' => ['/documento']],
+					['label' => 'Trámites Consultoria', 'icon' => 'list', 'url' => ['/vistamovimiento/']],
+					//['label' => 'Trámites Consultoria', 'icon' => 'list', 'url' => ['/movimiento']],
+					//['label' => 'Trámites Consultoria', 'icon' => 'list', 'url' => ['/movimiento']],
                 ],
             ]
         ) ?>
