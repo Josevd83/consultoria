@@ -176,6 +176,7 @@ class DocumentoController extends Controller
 					'showSeparator' => true,
 					
 				]);
+				//return $this->redirect(['vistamovimiento/view', 'id' => $modelMovimiento->ID_MOVIMIENTO]);
 				return $this->redirect(['view', 'id' => $model->ID_DOCUMENTO]);
 			}
             //$isValid = $model->validate();
@@ -315,7 +316,8 @@ class DocumentoController extends Controller
 		//echo "hola";
 		//Yii::$app->response->format = Response::FORMAT_JSON;
 		//die('Llegando');
-       $this->findModel($id)->delete();
+		if(MOVIMIENTO::deleteAll('ID_DOCUMENTO = '.$id))
+			$this->findModel($id)->delete();
 //return true;
 /*echo Json::encode([
 				'success' => true,
@@ -338,13 +340,15 @@ return;
 		// process ajax delete
 		if (Yii::$app->request->isAjax && isset($post['kvdelete'])) {
 			$model = $this->findModel($post['id']);
-			$model->delete();
+			if(MOVIMIENTO::deleteAll('ID_DOCUMENTO = '.$post['id']))
+				$model->delete();
 			echo Json::encode([
 				'success' => true,
 				'messages' => [
 					'kv-detail-info' => 'El Documento N° '.$model->NUM_DOCUMENTO.' fué eliminado exitósamente. ' . 
 						Html::a('<i class="glyphicon glyphicon-hand-right"></i>  Click aquí', 
-							['index'], ['class' => 'btn btn-sm btn-info']) . ' para continuar.'
+							['vistamovimiento/index'], ['class' => 'btn btn-sm btn-info']) . ' para continuar.'
+							//['index'], ['class' => 'btn btn-sm btn-info']) . ' para continuar.'
 				]
 			]);
 			return;

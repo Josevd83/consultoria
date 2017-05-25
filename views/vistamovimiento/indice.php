@@ -11,7 +11,6 @@ use app\models\DOCUMENTO;
 use app\models\ABOGADO;
 use app\models\ESTATUS;
 use app\models\TIPODOCUMENTOPASOS;
-use yii\web\View;
 //use yii\grid\GridView;
 
 /* @var $this yii\web\View */
@@ -24,11 +23,6 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="vistamovimiento-index">
 
     <h1><?= Html::encode($this->title) ?></h1>
-    
-    <p>
-        <?= Html::a('Crear Nuevo Documento', ['documento/create'], ['class' => 'btn btn-success']) ?>
-    </p>
-    
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
     
     <?php 
@@ -179,11 +173,10 @@ $this->params['breadcrumbs'][] = $this->title;
 								'deleteOptions'=>['title'=>'Eliminar Documento', 'data-toggle'=>'tooltip'],
 								'headerOptions'=>['class'=>'kartik-sheet-style'],
 								//'template'=>'{view}{update}{delete}{cambiarPaso}',
-								'template'=>'{cambiarPaso} {delete}',
+								'template'=>'{cambiarPaso}',
 								'buttons'=>[
 												'delete' => function ($url, $model) {
-																  //return Html::a('<span class="glyphicon glyphicon-trash"></span>', $url,
-																  return Html::a('<span class="glyphicon glyphicon-trash"></span>', Url::to(['documento/delete','id'=>$model->ID_DOCUMENTO]),
+																  return Html::a('<span class="glyphicon glyphicon-trash"></span>', $url,
 
 																	  [  
 																		 //'title' => Yii::t('yii', 'delete'),
@@ -200,26 +193,14 @@ $this->params['breadcrumbs'][] = $this->title;
 													
 															switch (TIPODOCUMENTOPASOS::enviarDevolver($model->ID_MOVIMIENTO)){
 																case 1:
-																	return Html::a('<span class="glyphicon glyphicon-eye-open"></span>',Url::to(['movimiento/view', 'id' => $model->ID_MOVIMIENTO]),['title'=>"Ver Detalle"])." ".
-																		   Html::a('<span class="fa fa-hand-o-right"></span>',Url::to(['movimiento/enviar', 'id' => $model->ID_MOVIMIENTO]),['title'=>"Enviar"]);
+																	return Html::a('<span class="fa fa-hand-o-right"></span>',Url::to(['movimiento/enviar', 'id' => $model->ID_MOVIMIENTO]),['title'=>"Enviar"]);
 																break;
 																case 2:
-																	//return Html::a('<span class="glyphicon glyphicon-eye-open"></span>',Url::to(['movimiento/recibido', 'id' => $model->ID_MOVIMIENTO]),['title'=>"Ver Detalle",'target'=>'_blank']);
-																	return Html::a('<span class="glyphicon glyphicon-eye-open"></span>',Url::to(['movimiento/recibido', 'id' => $model->ID_MOVIMIENTO]),
-																	[
-																		'title'=>"Ver Detalle",
-																		'target'=>'_blank',
-																		'id' => 'recibirDoc',
-																		'data-method' => 'post'
-																	]);
+																	return Html::a('<span class="glyphicon glyphicon-eye-open"></span>',Url::to(['movimiento/recibido', 'id' => $model->ID_MOVIMIENTO]),['title'=>"Ver Detalle"]);
 																break;
 																case 3:
-																	return Html::a('<span class="glyphicon glyphicon-eye-open"></span>',Url::to(['movimiento/view', 'id' => $model->ID_MOVIMIENTO]),['title'=>"Ver Detalle"])." ".
-																		   Html::a('<span class="fa fa-thumbs-o-up"></span>',Url::to(['movimiento/enviar', 'id' => $model->ID_MOVIMIENTO]),['title'=>"Aprobar y Enviar"])." ".
+																	return Html::a('<span class="fa fa-thumbs-o-up"></span>',Url::to(['movimiento/enviar', 'id' => $model->ID_MOVIMIENTO]),['title'=>"Aprobar y Enviar"]).
 																		   Html::a('<span class="fa fa-thumbs-o-down"></span>',Url::to(['movimiento/devolver', 'id' => $model->ID_MOVIMIENTO]),['title'=>"Rechazar y Devolver"]);
-																break;
-																case 4:
-																	return Html::a('<span class="glyphicon glyphicon-eye-open"></span>',Url::to(['movimiento/view', 'id' => $model->ID_MOVIMIENTO]),['title'=>"Ver Detalle"]);
 																break;
 																default:
 																	return '';
@@ -253,8 +234,7 @@ $this->params['breadcrumbs'][] = $this->title;
 			],
 			'toolbar'=> [
 				['content'=>
-					Html::a('<i class="glyphicon glyphicon-plus"></i>', ['documento/create'],['title'=>'Crear Nuevo Documento', 'class'=>'btn btn-success']) . ' '.
-					//Html::a('<i class="glyphicon glyphicon-plus"></i>', ['create'],['title'=>'Crear Nuevo Documento', 'class'=>'btn btn-success']) . ' '.
+					Html::a('<i class="glyphicon glyphicon-plus"></i>', ['create'],['title'=>'Crear Nuevo Documento', 'class'=>'btn btn-success']) . ' '.
 					//Html::button('<i class="glyphicon glyphicon-plus"></i>', ['type'=>'button', 'title'=>'Crear Nuevo Documento', 'class'=>'btn btn-success', 'onclick'=>'alert("This will launch the book creation form.\n\nDisabled for this demo!");']) . ' '.
 					//Html::button('<i class="glyphicon glyphicon-repeat"></i>', ['type'=>'button', 'data-pjax'=>0, 'class'=>'btn btn-default', 'title'=>'Refrescar', 'id'=>'refrescar']).
 					//Html::a('<i class="glyphicon glyphicon-repeat"></i>', ['grid-demo'], ['data-pjax'=>0, 'class'=>'btn btn-default', 'title'=>'Agregar'])
@@ -283,54 +263,3 @@ $this->params['breadcrumbs'][] = $this->title;
 		]);
     ?>
 </div>
-
-<?php
-$this->registerJsFile(
-    '@web/js/gridTramite.js',
-    ['depends' => [\yii\web\JqueryAsset::className()]]
-);
-?>
-
-<?php $script = "$('body').on('click', '#recibirDoc', function(e) {
-       var url = $(this).attr('href') ,row = $(this).closest('tr'), cell = $(this).closest('td');
-		$.ajax({
-							url: url,
-                            type: 'post',
-                            //dataType: 'text',
-                            beforeSend: function() {
-                                row.addClass('kv-delete-row');
-                                cell.addClass('kv-delete-cell');
-                            },
-                            complete: function () {
-                                row.removeClass('kv-delete-row');
-                                cell.removeClass('kv-delete-cell');
-                            },
-                            error: function (xhr, status, error) {
-                                //krajeeDialog.alert('There was an error with your request.' + xhr.responseText);
-                                krajeeDialog.alert('Hubo un error');
-                            },
-                            success: function(data){
-								var dialog = new BootstrapDialog({
-									message: 'Documento recibido exitósamente '+ data,
-									type: BootstrapDialog.TYPE_INFO,
-									title: 'Información',
-									buttons: [
-									{
-										id: 'btn-1',
-										label: 'Cerrar',
-										action: function(dialogItself){
-											dialogItself.close();
-											$.pjax.reload({container: '#kv-grid-demo-pjax'});
-										}
-									}]
-								});
-								dialog.open();
-					
-							}
-                        }).done(function (data) {
-
-                        });	
-			return false;
-    });"; 
-?>
-<?php $this->registerJs($script,View::POS_END); ?>

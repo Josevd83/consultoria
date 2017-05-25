@@ -116,4 +116,10 @@ class VISTAMOVIMIENTO extends \yii\db\ActiveRecord
     {
         return $this->hasOne(ORGANISMO::className(), ['ID_ORGANISMO' => 'ID_ORGANISMO']);
     }
+    
+    public function getEstatus()
+    {
+        return $this->hasOne(ESTATUS::className(), ['ID_ESTATUS' => 'ID_ESTATUS']);
+    }
+    
 }

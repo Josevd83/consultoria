@@ -121,4 +121,26 @@ class VistamovimientoController extends Controller
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
+    
+    public function actionVicepresidencia()
+    {
+        $searchModel = new VISTAMOVIMIENTOSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        return $this->render('vicepresidencia', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
+    }
+    
+    public function actionIndice()
+    {
+        $searchModel = new VISTAMOVIMIENTOSearch();
+        $dataProvider = $searchModel->search2(Yii::$app->request->queryParams);
+
+        return $this->render('index', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
+    }
 }

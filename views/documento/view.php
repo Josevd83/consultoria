@@ -51,7 +51,7 @@ $this->params['breadcrumbs'][] = ['label' => 'Documentos', 'url' => ['index']];
                 'method' => 'post',
             ],
         ]) ?>
-        <?= Html::a('Ver Listado', ['index'],['class'=>'btn btn-warning'])?>
+        <?= Html::a('Ver Listado', ['vistamovimiento/index'],['class'=>'btn btn-warning'])?>
         <?= Html::a('Crear Nuevo Documento',['create'], ['class'=>'btn btn-success']) ?>
     </p>
 

@@ -179,6 +179,5 @@ class MOVIMIENTO extends \yii\db\ActiveRecord
     public function getDocumento()
     {
         return $this->hasOne(DOCUMENTO::className(), ['ID_DOCUMENTO' => 'ID_DOCUMENTO']);
-    }
-    
+    }    
 }

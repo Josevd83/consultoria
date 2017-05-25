@@ -102,4 +102,43 @@ class TIPODOCUMENTOPASOS extends \yii\db\ActiveRecord
     {
         return $this->hasOne(DEPARTAMENTO::className(), ['ID_DEPARTAMENTO' => '1']);
     }
+    
+    public static function verificarPaso($id_movimiento){
+		//TIPODOCUMENTOPASOS
+		$modelMovimiento = MOVIMIENTO::findOne($id_movimiento);
+		$modelTipodocumentoPasos = TIPODOCUMENTOPASOS::findAll(['ID_TIPO_DOCUMENTO'=>$modelMovimiento->ID_TIPO_DOCUMENTO,'ID_ESTATUS'=>$modelMovimiento->ID_ESTATUS]);
+		
+		if($modelMovimiento->ID_ESTATUS == 3){
+			$proximoPaso = 2;
+		}
+		var_dump($modelTipodocumentoPasos);die;
+		return $id_movimiento;
+	}
+	
+	public static function enviarDevolver($id_movimiento){
+		
+		$modelMovimiento = MOVIMIENTO::findOne($id_movimiento);
+		
+		$estatus = $modelMovimiento->ID_ESTATUS;
+		
+		$numeroDeAcciones = 0;
+		
+		if($estatus==3){
+			$numeroDeAcciones = 1;
+		}
+		
+		if($estatus==6){
+			$numeroDeAcciones = 2;
+		}
+		
+		if($estatus==4){
+			$numeroDeAcciones = 3;
+		}
+		
+		if($estatus==7){
+			$numeroDeAcciones = 4;
+		}
+		
+		return $numeroDeAcciones;	
+	}
 }

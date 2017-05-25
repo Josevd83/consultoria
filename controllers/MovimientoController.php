@@ -8,6 +8,13 @@ use app\models\MOVIMIENTOSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use app\models\TIPODOCUMENTOPASOS;
+use yii\db\Expression;
+use app\models\VISTAMOVIMIENTO;
+use yii\helpers\Json;
+use yii\web\Response;
+use yii\helpers\Html;
+use yii\helpers\Url;
 
 /**
  * MovimientoController implements the CRUD actions for MOVIMIENTO model.
@@ -52,7 +59,8 @@ class MovimientoController extends Controller
     public function actionView($id)
     {
         return $this->render('view', [
-            'model' => $this->findModel($id),
+           // 'model' => $this->findModel($id),
+            'model' => $model = VISTAMOVIMIENTO::findOne($id),
         ]);
     }
 
@@ -121,4 +129,118 @@ class MovimientoController extends Controller
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
+    
+    public function actionEnviar($id){
+		//echo $id;die;
+		//$this->layout = false;
+		//die($id);
+		$modelMovimiento = MOVIMIENTO::findOne($id);
+		//var_dump($modelMovimiento->NRO_PASO);die;
+		$modelTipodocumentoPasosProximo = TIPODOCUMENTOPASOS::findOne(['ID_TIPO_DOCUMENTO'=>$modelMovimiento->ID_TIPO_DOCUMENTO,'NRO_PASO'=>($modelMovimiento->NRO_PASO+1)]);
+		$modelNewMovimiento = new MOVIMIENTO;
+		
+		switch ($modelMovimiento->ID_ESTATUS){
+			case '3':
+//			die('registrado');
+			//$modelTipoDocumentoPasos = TIPODOCUMENTOPASOS::find()->where(['NRO_PASO'=>1])->one();
+			
+			
+			$modelNewMovimiento->ID_MOVIMIENTO = $modelMovimiento->getNextVal();
+			$modelNewMovimiento->ID_DOCUMENTO = $modelMovimiento->ID_DOCUMENTO;
+			$modelNewMovimiento->ID_ESTATUS = $modelTipodocumentoPasosProximo->ID_ESTATUS;
+			$modelNewMovimiento->ID_DEPARTAMENTO = $modelTipodocumentoPasosProximo->ID_DEPARTAMENTO;
+			$modelNewMovimiento->ID_USUARIO = 1; //modificar
+			$modelNewMovimiento->ID_SOLICITANTE = $modelMovimiento->ID_SOLICITANTE;
+			$modelNewMovimiento->ID_TIPO_MOVIMIENTO = $modelTipodocumentoPasosProximo->ID_TIPO_MOVIMIENTO;
+			$modelNewMovimiento->ID_TIPO_DOCUMENTO = $modelTipodocumentoPasosProximo->ID_TIPO_DOCUMENTO;
+			$modelNewMovimiento->ID_PASO = $modelTipodocumentoPasosProximo->ID_PASO;
+			$modelNewMovimiento->NRO_PASO = $modelTipodocumentoPasosProximo->NRO_PASO;
+			$modelNewMovimiento->DESCRIPCION_PASO = $modelTipodocumentoPasosProximo->DESCRIPCION_PASO;
+			$modelNewMovimiento->OBSERVACIONES = 'Documento enviado';
+			$modelNewMovimiento->FECHA_CREACION = new Expression('SYSDATE');
+			break;
+			
+			case '4':
+//			die('registrado');
+			//$modelTipoDocumentoPasos = TIPODOCUMENTOPASOS::find()->where(['NRO_PASO'=>1])->one();
+			
+			
+			$modelNewMovimiento->ID_MOVIMIENTO = $modelMovimiento->getNextVal();
+			$modelNewMovimiento->ID_DOCUMENTO = $modelMovimiento->ID_DOCUMENTO;
+			$modelNewMovimiento->ID_ESTATUS = $modelTipodocumentoPasosProximo->ID_ESTATUS;
+			$modelNewMovimiento->ID_DEPARTAMENTO = $modelTipodocumentoPasosProximo->ID_DEPARTAMENTO;
+			$modelNewMovimiento->ID_USUARIO = 1; //modificar
+			$modelNewMovimiento->ID_SOLICITANTE = $modelMovimiento->ID_SOLICITANTE;
+			$modelNewMovimiento->ID_TIPO_MOVIMIENTO = $modelTipodocumentoPasosProximo->ID_TIPO_MOVIMIENTO;
+			$modelNewMovimiento->ID_TIPO_DOCUMENTO = $modelTipodocumentoPasosProximo->ID_TIPO_DOCUMENTO;
+			$modelNewMovimiento->ID_PASO = $modelTipodocumentoPasosProximo->ID_PASO;
+			$modelNewMovimiento->NRO_PASO = $modelTipodocumentoPasosProximo->NRO_PASO;
+			$modelNewMovimiento->DESCRIPCION_PASO = $modelTipodocumentoPasosProximo->DESCRIPCION_PASO;
+			$modelNewMovimiento->OBSERVACIONES = 'Documento enviado a vicepresidencia';
+			$modelNewMovimiento->FECHA_CREACION = new Expression('SYSDATE');
+			break;
+		}
+		
+		if($modelNewMovimiento->save(false)){
+				return $this->redirect(['vistamovimiento/index']);
+			}
+		
+		//var_dump($modelTipodocumentoPasos);die;
+	}
+	
+	public function actionRecibido($id){
+		
+		//$model = VISTAMOVIMIENTO::findOne(['ID_MOVIMIENTO'=>$id]);
+		//var_dump($model);
+		//if($model){
+			
+			$modelNewMovimiento = new MOVIMIENTO;
+			
+			$modelMovimiento = MOVIMIENTO::findOne($id);
+			if($modelMovimiento){
+				if($modelMovimiento->ID_ESTATUS == 6){
+					//var_dump($modelMovimiento->NRO_PASO);die;
+					$modelTipodocumentoPasosProximo = TIPODOCUMENTOPASOS::findOne(['ID_TIPO_DOCUMENTO'=>$modelMovimiento->ID_TIPO_DOCUMENTO,'NRO_PASO'=>($modelMovimiento->NRO_PASO+1),'ID_ESTATUS'=>4]);
+					//$modelNewMovimiento = new MOVIMIENTO;
+					
+					$modelNewMovimiento->ID_MOVIMIENTO = $modelMovimiento->getNextVal();
+					$modelNewMovimiento->ID_DOCUMENTO = $modelMovimiento->ID_DOCUMENTO;
+					$modelNewMovimiento->ID_ESTATUS = $modelTipodocumentoPasosProximo->ID_ESTATUS;
+					$modelNewMovimiento->ID_DEPARTAMENTO = $modelTipodocumentoPasosProximo->ID_DEPARTAMENTO;
+					$modelNewMovimiento->ID_USUARIO = 1; //modificar
+					$modelNewMovimiento->ID_SOLICITANTE = $modelMovimiento->ID_SOLICITANTE;
+					$modelNewMovimiento->ID_TIPO_MOVIMIENTO = $modelTipodocumentoPasosProximo->ID_TIPO_MOVIMIENTO;
+					$modelNewMovimiento->ID_TIPO_DOCUMENTO = $modelTipodocumentoPasosProximo->ID_TIPO_DOCUMENTO;
+					$modelNewMovimiento->ID_PASO = $modelTipodocumentoPasosProximo->ID_PASO;
+					$modelNewMovimiento->NRO_PASO = $modelTipodocumentoPasosProximo->NRO_PASO;
+					$modelNewMovimiento->DESCRIPCION_PASO = $modelTipodocumentoPasosProximo->DESCRIPCION_PASO;
+					$modelNewMovimiento->OBSERVACIONES = 'Documento Recibido';
+					$modelNewMovimiento->FECHA_CREACION = new Expression('SYSDATE');
+					//echo $modelNewMovimiento->ID_MOVIMIENTO."-";
+					//if($modelNewMovimiento->load(Yii::$app->request->get()) && $modelNewMovimiento->save(false)){
+					if($modelNewMovimiento->save(false)){
+						Yii::$app->response->format = Response::FORMAT_JSON;
+						$data = Html::a('<i class="glyphicon glyphicon-hand-right"></i>  Click aquí',Url::to(['vistamovimiento/view','id'=>$modelNewMovimiento->ID_MOVIMIENTO]),['class' => 'btn btn-sm btn-info']).' para ver el documento';
+						return $data;
+						//$model = VISTAMOVIMIENTO::findOne(['ID_MOVIMIENTO'=>$modelNewMovimiento->ID_MOVIMIENTO]);
+						//die('paso1');
+						/*return $this->render('view', [
+							'model' => $model,
+						]);*/
+					}
+				}
+			}
+			
+			//die('paso2');
+			/*return $this->render('recibido', [
+						'model' => $model,
+			]);*/
+			
+		//}
+		
+		
+		
+		
+		//var_dump($modelTipodocumentoPasos);die;
+	}
 }
