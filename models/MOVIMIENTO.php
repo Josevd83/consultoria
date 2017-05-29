@@ -53,14 +53,14 @@ class MOVIMIENTO extends \yii\db\ActiveRecord
             [['FECHA_CREACION', 'FECHA_MODIFICACION'], 'string'],
             [['DESCRIPCION_PASO'], 'string', 'max' => 80],
             [['OBSERVACIONES'], 'string', 'max' => 1000],
-            [['1'], 'exist', 'skipOnError' => true, 'targetClass' => DOCUMENTO::className(), 'targetAttribute' => ['1' => 'ID_DOCUMENTO']],
+            /*[['1'], 'exist', 'skipOnError' => true, 'targetClass' => DOCUMENTO::className(), 'targetAttribute' => ['1' => 'ID_DOCUMENTO']],
             [['1'], 'exist', 'skipOnError' => true, 'targetClass' => ESTATUS::className(), 'targetAttribute' => ['1' => 'ID_ESTATUS']],
             [['1'], 'exist', 'skipOnError' => true, 'targetClass' => DEPARTAMENTO::className(), 'targetAttribute' => ['1' => 'ID_DEPARTAMENTO']],
             [['1'], 'exist', 'skipOnError' => true, 'targetClass' => USUARIO::className(), 'targetAttribute' => ['1' => 'USER_ID']],
             [['1'], 'exist', 'skipOnError' => true, 'targetClass' => SOLICITANTE::className(), 'targetAttribute' => ['1' => 'ID_SOLICITANTE']],
             [['1'], 'exist', 'skipOnError' => true, 'targetClass' => TIPOMOVIMIENTO::className(), 'targetAttribute' => ['1' => 'ID_TIPO_MOVIMIENTO']],
             [['1'], 'exist', 'skipOnError' => true, 'targetClass' => TIPODOCUMENTO::className(), 'targetAttribute' => ['1' => 'ID_TIPO_DOCUMENTO']],
-            [['1'], 'exist', 'skipOnError' => true, 'targetClass' => TIPODOCUMENTOPASOS::className(), 'targetAttribute' => ['1' => 'ID_PASO']],
+            [['1'], 'exist', 'skipOnError' => true, 'targetClass' => TIPODOCUMENTOPASOS::className(), 'targetAttribute' => ['1' => 'ID_PASO']],*/
         ];
     }
 
@@ -90,66 +90,66 @@ class MOVIMIENTO extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function get1()
+    /*public function get1()
     {
         return $this->hasOne(DOCUMENTO::className(), ['ID_DOCUMENTO' => '1']);
-    }
+    }*/
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function get10()
+    /*public function get10()
     {
         return $this->hasOne(ESTATUS::className(), ['ID_ESTATUS' => '1']);
-    }
+    }*/
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function get11()
+    /*public function get11()
     {
         return $this->hasOne(DEPARTAMENTO::className(), ['ID_DEPARTAMENTO' => '1']);
-    }
+    }*/
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function get12()
+    /*public function get12()
     {
         return $this->hasOne(USUARIO::className(), ['USER_ID' => '1']);
-    }
+    }*/
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function get13()
+    /*public function get13()
     {
         return $this->hasOne(SOLICITANTE::className(), ['ID_SOLICITANTE' => '1']);
-    }
+    }*/
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function get14()
+    /*public function get14()
     {
         return $this->hasOne(TIPOMOVIMIENTO::className(), ['ID_TIPO_MOVIMIENTO' => '1']);
-    }
+    }*/
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function get15()
+    /*public function get15()
     {
         return $this->hasOne(TIPODOCUMENTO::className(), ['ID_TIPO_DOCUMENTO' => '1']);
-    }
+    }*/
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function get16()
+    /*public function get16()
     {
         return $this->hasOne(TIPODOCUMENTOPASOS::className(), ['ID_PASO' => '1']);
-    }
+    }*/
 
     /**
      * @return \yii\db\ActiveQuery

@@ -120,6 +120,8 @@ class TIPODOCUMENTOPASOS extends \yii\db\ActiveRecord
 		$modelMovimiento = MOVIMIENTO::findOne($id_movimiento);
 		
 		$estatus = $modelMovimiento->ID_ESTATUS;
+		$idTipoDocumento = $modelMovimiento->ID_TIPO_DOCUMENTO;
+		$idDepartamento = $modelMovimiento->ID_DEPARTAMENTO;
 		
 		$numeroDeAcciones = 0;
 		
@@ -137,6 +139,10 @@ class TIPODOCUMENTOPASOS extends \yii\db\ActiveRecord
 		
 		if($estatus==7){
 			$numeroDeAcciones = 4;
+		}
+		
+		if($estatus==4 && $idTipoDocumento==4 && $idDepartamento==4){
+			$numeroDeAcciones = 5;
 		}
 		
 		return $numeroDeAcciones;	

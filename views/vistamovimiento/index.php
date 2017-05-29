@@ -12,6 +12,7 @@ use app\models\ABOGADO;
 use app\models\ESTATUS;
 use app\models\TIPODOCUMENTOPASOS;
 use yii\web\View;
+use kartik\widgets\Growl;
 //use yii\grid\GridView;
 
 /* @var $this yii\web\View */
@@ -21,6 +22,30 @@ use yii\web\View;
 $this->title = 'Listado de Documentos';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
+
+<?php foreach (Yii::$app->session->getAllFlashes() as $message):; ?>
+	<?php
+		echo \kartik\widgets\Growl::widget([
+			//'type' => (!empty($message['type'])) ? $message['type'] : 'danger',
+			'type' => (!empty($message['type'])) ? $message['type'] : Growl::TYPE_SUCCESS,
+			'title' => (!empty($message['title'])) ? Html::encode($message['title']) : 'Title Not Set!',
+			'icon' => (!empty($message['icon'])) ? $message['icon'] : 'fa fa-info',
+			'body' => (!empty($message['message'])) ? Html::encode($message['message']) : 'Message Not Set!',
+			'showSeparator' => true,
+			'delay' => 1, //This delay is how long before the message shows
+			'pluginOptions' => [
+				'delay' => (!empty($message['duration'])) ? $message['duration'] : 3000, //This delay is how long the message shows for
+				'showProgressbar' => (!empty($message['showProgressbar'])) ? $message['showProgressbar'] : true,
+				'placement' => [
+					'from' => (!empty($message['positonY'])) ? $message['positonY'] : 'top',
+					'align' => (!empty($message['positonX'])) ? $message['positonX'] : 'right',
+					
+				]
+			]
+		]);
+	?>
+<?php endforeach; ?>
+
 <div class="vistamovimiento-index">
 
     <h1><?= Html::encode($this->title) ?></h1>
@@ -201,25 +226,45 @@ $this->params['breadcrumbs'][] = $this->title;
 															switch (TIPODOCUMENTOPASOS::enviarDevolver($model->ID_MOVIMIENTO)){
 																case 1:
 																	return Html::a('<span class="glyphicon glyphicon-eye-open"></span>',Url::to(['movimiento/view', 'id' => $model->ID_MOVIMIENTO]),['title'=>"Ver Detalle"])." ".
-																		   Html::a('<span class="fa fa-hand-o-right"></span>',Url::to(['movimiento/enviar', 'id' => $model->ID_MOVIMIENTO]),['title'=>"Enviar"]);
+																		   Html::a('<span class="fa fa-hand-o-right"></span>',Url::to(['movimiento/enviar', 'id' => $model->ID_MOVIMIENTO]),[
+																				'title'=>"Aprobar y Enviar",
+																				'id' => 'enviarDoc',
+																				'data-method' => 'post'
+																			]);
 																break;
 																case 2:
 																	//return Html::a('<span class="glyphicon glyphicon-eye-open"></span>',Url::to(['movimiento/recibido', 'id' => $model->ID_MOVIMIENTO]),['title'=>"Ver Detalle",'target'=>'_blank']);
-																	return Html::a('<span class="glyphicon glyphicon-eye-open"></span>',Url::to(['movimiento/recibido', 'id' => $model->ID_MOVIMIENTO]),
+																	return Html::a('<span class="fa fa-download"></span>',Url::to(['movimiento/recibido', 'id' => $model->ID_MOVIMIENTO]),
 																	[
-																		'title'=>"Ver Detalle",
-																		'target'=>'_blank',
+																		'title'=>"Recibir Documento",
+																		//'target'=>'_blank',
 																		'id' => 'recibirDoc',
 																		'data-method' => 'post'
 																	]);
 																break;
 																case 3:
 																	return Html::a('<span class="glyphicon glyphicon-eye-open"></span>',Url::to(['movimiento/view', 'id' => $model->ID_MOVIMIENTO]),['title'=>"Ver Detalle"])." ".
-																		   Html::a('<span class="fa fa-thumbs-o-up"></span>',Url::to(['movimiento/enviar', 'id' => $model->ID_MOVIMIENTO]),['title'=>"Aprobar y Enviar"])." ".
+																		   Html::a('<span class="fa fa-thumbs-o-up"></span>',Url::to(['movimiento/enviar', 'id' => $model->ID_MOVIMIENTO]),
+																		   [
+																				'title'=>"Aprobar y Enviar",
+																				'id' => 'enviarDoc',
+																				'data-method' => 'post'
+																			])." ".
 																		   Html::a('<span class="fa fa-thumbs-o-down"></span>',Url::to(['movimiento/devolver', 'id' => $model->ID_MOVIMIENTO]),['title'=>"Rechazar y Devolver"]);
 																break;
 																case 4:
 																	return Html::a('<span class="glyphicon glyphicon-eye-open"></span>',Url::to(['movimiento/view', 'id' => $model->ID_MOVIMIENTO]),['title'=>"Ver Detalle"]);
+																break;
+																case 5:
+																	return Html::a('<span class="glyphicon glyphicon-eye-open"></span>',Url::to(['movimiento/view', 'id' => $model->ID_MOVIMIENTO]),['title'=>"Ver Detalle"])." ".
+																		   Html::a('<span class="fa fa-thumbs-o-up"></span>',Url::to(['movimiento/enviar', 'id' => $model->ID_MOVIMIENTO]),
+																		   [
+																				'title'=>"Aprobar y Enviar",
+																				'id' => 'enviarDoc',
+																				'data-method' => 'post'
+																			])." ".
+																		   Html::a('<span class="fa fa-thumbs-o-down"></span>',Url::to(['movimiento/devolver', 'id' => $model->ID_MOVIMIENTO]),['title'=>"Rechazar y Devolver"])." ".
+																		   Html::a('<span class="glyphicon glyphicon-pencil"></span>',Url::to(['documento/modificar', 'id' => $model->ID_DOCUMENTO, 'movimiento'=>$model->ID_MOVIMIENTO]),['title'=>"Modificar"]);
 																break;
 																default:
 																	return '';
@@ -314,6 +359,51 @@ $this->registerJsFile(
 									message: 'Documento recibido exitósamente '+ data,
 									type: BootstrapDialog.TYPE_INFO,
 									title: 'Información',
+									closable: false,
+									//dialogRef.setClosable(false);
+									buttons: [
+									{
+										id: 'btn-1',
+										label: 'Cerrar',
+										action: function(dialogItself){
+											dialogItself.close();
+											$.pjax.reload({container: '#kv-grid-demo-pjax'});
+										}
+									}]
+								});
+								dialog.open();
+					
+							}
+                        }).done(function (data) {
+
+                        });	
+			return false;
+    });
+    
+    $('body').on('click', '#enviarDoc', function(e) {
+       var url = $(this).attr('href') ,row = $(this).closest('tr'), cell = $(this).closest('td');
+		$.ajax({
+							url: url,
+                            type: 'post',
+                            //dataType: 'text',
+                            beforeSend: function() {
+                                row.addClass('kv-delete-row');
+                                cell.addClass('kv-delete-cell');
+                            },
+                            complete: function () {
+                                row.removeClass('kv-delete-row');
+                                cell.removeClass('kv-delete-cell');
+                            },
+                            error: function (xhr, status, error) {
+                                //krajeeDialog.alert('There was an error with your request.' + xhr.responseText);
+                                krajeeDialog.alert('Hubo un error');
+                            },
+                            success: function(data){
+								var dialog = new BootstrapDialog({
+									message: 'Documento enviado exitósamente.',
+									type: BootstrapDialog.TYPE_INFO,
+									title: 'Información',
+									closable: false,
 									buttons: [
 									{
 										id: 'btn-1',

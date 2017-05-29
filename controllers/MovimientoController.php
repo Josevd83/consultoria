@@ -159,7 +159,7 @@ class MovimientoController extends Controller
 			$modelNewMovimiento->OBSERVACIONES = 'Documento enviado';
 			$modelNewMovimiento->FECHA_CREACION = new Expression('SYSDATE');
 			break;
-			
+
 			case '4':
 //			die('registrado');
 			//$modelTipoDocumentoPasos = TIPODOCUMENTOPASOS::find()->where(['NRO_PASO'=>1])->one();
@@ -180,10 +180,12 @@ class MovimientoController extends Controller
 			$modelNewMovimiento->FECHA_CREACION = new Expression('SYSDATE');
 			break;
 		}
-		
-		if($modelNewMovimiento->save(false)){
+
+		$modelNewMovimiento->save(false);
+		return;
+		/*if($modelNewMovimiento->save(false)){
 				return $this->redirect(['vistamovimiento/index']);
-			}
+			}*/
 		
 		//var_dump($modelTipodocumentoPasos);die;
 	}

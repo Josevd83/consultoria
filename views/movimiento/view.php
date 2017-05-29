@@ -14,6 +14,29 @@ $this->title = 'Detalle del Documento';
 $this->params['breadcrumbs'][] = ['label' => 'Documentos', 'url' => ['index']];
 ?>
 
+<?php foreach (Yii::$app->session->getAllFlashes() as $message):; ?>
+	<?php
+		echo \kartik\widgets\Growl::widget([
+			//'type' => (!empty($message['type'])) ? $message['type'] : 'danger',
+			'type' => (!empty($message['type'])) ? $message['type'] : Growl::TYPE_SUCCESS,
+			'title' => (!empty($message['title'])) ? Html::encode($message['title']) : 'Title Not Set!',
+			'icon' => (!empty($message['icon'])) ? $message['icon'] : 'fa fa-info',
+			'body' => (!empty($message['message'])) ? Html::encode($message['message']) : 'Message Not Set!',
+			'showSeparator' => true,
+			'delay' => 1, //This delay is how long before the message shows
+			'pluginOptions' => [
+				'delay' => (!empty($message['duration'])) ? $message['duration'] : 3000, //This delay is how long the message shows for
+				'showProgressbar' => (!empty($message['showProgressbar'])) ? $message['showProgressbar'] : true,
+				'placement' => [
+					'from' => (!empty($message['positonY'])) ? $message['positonY'] : 'top',
+					'align' => (!empty($message['positonX'])) ? $message['positonX'] : 'right',
+					
+				]
+			]
+		]);
+	?>
+<?php endforeach; ?>
+
 <p>
         <?= Html::a('Ver Listado', ['vistamovimiento/index'],['class'=>'btn btn-warning'])?>
 </p>
@@ -122,8 +145,8 @@ $this->params['breadcrumbs'][] = ['label' => 'Documentos', 'url' => ['index']];
 													'valueColOptions'=>['style'=>'width:30%']
 												],
 												[
-													'attribute'=>'OBSERVACIONES',
-													//'value'=>$model->solicitante->PRIMER_APELLIDO." ".$model->solicitante->SEGUNDO_APELLIDO,
+													'attribute'=>'ID_DOCUMENTO',
+													'value'=>$model->documento->OBSERVACIONES,
 													//'type'=>DetailView::INPUT_SELECT2, 
 													'label'=>'Observaciones',
 													'displayOnly'=>true,
@@ -383,8 +406,8 @@ $this->params['breadcrumbs'][] = ['label' => 'Documentos', 'url' => ['index']];
 													'valueColOptions'=>['style'=>'width:30%']
 												],
 												[
-													'attribute'=>'OBSERVACIONES',
-													//'value'=>$model->solicitante->PRIMER_APELLIDO." ".$model->solicitante->SEGUNDO_APELLIDO,
+													'attribute'=>'ID_DOCUMENTO',
+													'value'=>$model->documento->OBSERVACIONES,
 													//'type'=>DetailView::INPUT_SELECT2, 
 													'label'=>'Observaciones',
 													'displayOnly'=>true,

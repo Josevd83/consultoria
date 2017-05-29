@@ -17,6 +17,7 @@ use yii\helpers\Html;
 use kartik\widgets\Growl;
 use app\models\MOVIMIENTO;
 use app\models\TIPODOCUMENTOPASOS;
+use app\models\VISTAMOVIMIENTO;
 
 /**
  * DocumentoController implements the CRUD actions for DOCUMENTO model.
@@ -416,5 +417,55 @@ return;
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
+    }
+    
+    public function actionModificar($id,$movimiento)
+    {
+        //validacion de los parametros pasados por url
+        $vistaMovimiento = VISTAMOVIMIENTO::findOne(['ID_DOCUMENTO'=>$id,'ID_MOVIMIENTO'=>$movimiento]);
+        
+        if(!$vistaMovimiento){
+				Yii::$app->getSession()->setFlash('danger', [
+					'type' => Growl::TYPE_DANGER,
+					'icon' => 'fa fa-users',
+					'message' => Html::encode('Solicitud Inválida'),
+					'title' => Html::encode('Resultado'),
+					'showSeparator' => true,
+					
+				]);
+				return $this->redirect(['vistamovimiento/index']);
+        }
+        
+        $model = $this->findModel($id);
+        $modelSolicitante = SOLICITANTE::findOne($model->ID_SOLICITANTE);
+        
+        if (Yii::$app->request->isAjax && $model->load(Yii::$app->request->post())) {
+				Yii::$app->response->format = Response::FORMAT_JSON;
+				return ActiveForm::validate($model);
+		}
+		
+		if($model->load(Yii::$app->request->post())) {
+			$model->FECHA_MODIFICACION = new Expression('SYSDATE');
+			$model->ID_USUARIO = 1;
+
+			if($model->save(false)){
+				$idMovimiento = Yii::$app->request->post('movimiento');
+				Yii::$app->getSession()->setFlash('success', [
+					'type' => Growl::TYPE_SUCCESS,
+					'icon' => 'fa fa-users',
+					'message' => Html::encode('Documento actualizado correctamente'),
+					'title' => Html::encode('Resultado'),
+					'showSeparator' => true,
+					
+				]);
+				return $this->redirect(['movimiento/view', 'id' => $idMovimiento]);
+			}
+        }else {
+            return $this->render('modificar', [
+                'model' => $model,
+                'modelSolicitante' => $modelSolicitante,
+                'movimiento'=>$movimiento,
+            ]);
+        }
     }
 }

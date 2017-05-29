@@ -10,6 +10,7 @@ use app\models\SOLICITANTE;
 use app\models\ABOGADO;
 use yii\widgets\Pjax;
 use yii\web\View;
+use kartik\widgets\Growl;
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\DOCUMENTOSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -18,6 +19,30 @@ $this->title = 'Documentos';
 $this->params['breadcrumbs'][] = $this->title;
 //$this->params['breadcrumbs'][] = ['label' => 'Documentos', 'url' => ['index']];
 ?>
+
+<?php foreach (Yii::$app->session->getAllFlashes() as $message):; ?>
+	<?php
+		echo \kartik\widgets\Growl::widget([
+			//'type' => (!empty($message['type'])) ? $message['type'] : 'danger',
+			'type' => (!empty($message['type'])) ? $message['type'] : Growl::TYPE_SUCCESS,
+			'title' => (!empty($message['title'])) ? Html::encode($message['title']) : 'Title Not Set!',
+			'icon' => (!empty($message['icon'])) ? $message['icon'] : 'fa fa-info',
+			'body' => (!empty($message['message'])) ? Html::encode($message['message']) : 'Message Not Set!',
+			'showSeparator' => true,
+			'delay' => 1, //This delay is how long before the message shows
+			'pluginOptions' => [
+				'delay' => (!empty($message['duration'])) ? $message['duration'] : 3000, //This delay is how long the message shows for
+				'showProgressbar' => (!empty($message['showProgressbar'])) ? $message['showProgressbar'] : true,
+				'placement' => [
+					'from' => (!empty($message['positonY'])) ? $message['positonY'] : 'top',
+					'align' => (!empty($message['positonX'])) ? $message['positonX'] : 'right',
+					
+				]
+			]
+		]);
+	?>
+<?php endforeach; ?>
+
 <div class="documento-index">
 
     <!--<h1><?= Html::encode($this->title) ?></h1>-->
