@@ -58,9 +58,32 @@ class MovimientoController extends Controller
      */
     public function actionView($id)
     {
+		$model = VISTAMOVIMIENTO::find($id)->select([
+		'ID_MOVIMIENTO',
+		'ID_DOCUMENTO',
+		'ID_ESTATUS',
+		'ID_DEPARTAMENTO',
+		'ID_USUARIO',
+		'ID_SOLICITANTE',
+		'ID_TIPO_MOVIMIENTO',
+		'ID_TIPO_DOCUMENTO',
+		'ID_PASO',
+		'NRO_PASO',
+		'DESCRIPCION_PASO',
+		'OBSERVACIONES',
+		'TO_CHAR(FECHA_CREACION, \'DD/MM/YYYY - HH12:MI:SS P.M.\') AS FECHA_CREACION',
+		//'TO_CHAR(FECHA_CREACION, \'DD/MM/YYYY HH24:MI:SS AM PM\') AS FECHA_CREACION',
+		'FECHA_MODIFICACION',
+		'ID_TIPO_SOLICITUD',
+		'ID_ORGANISMO',
+		'ID_BANCO',
+		'ID_ABOGADO'
+		])->one();
+		//var_dump($model);die;
         return $this->render('view', [
            // 'model' => $this->findModel($id),
-            'model' => $model = VISTAMOVIMIENTO::findOne($id),
+            #'model' => $model = VISTAMOVIMIENTO::findOne($id),
+            'model' => $model,
         ]);
     }
 

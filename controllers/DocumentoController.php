@@ -178,7 +178,8 @@ class DocumentoController extends Controller
 					
 				]);
 				//return $this->redirect(['vistamovimiento/view', 'id' => $modelMovimiento->ID_MOVIMIENTO]);
-				return $this->redirect(['view', 'id' => $model->ID_DOCUMENTO]);
+				#return $this->redirect(['view', 'id' => $model->ID_DOCUMENTO]);
+				return $this->redirect(['movimiento/view', 'id' => $modelMovimiento->ID_MOVIMIENTO]);
 			}
             //$isValid = $model->validate();
             //$isValid = $modelSolicitante->validate() && $isValid;

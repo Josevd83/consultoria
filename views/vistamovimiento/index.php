@@ -204,7 +204,8 @@ $this->params['breadcrumbs'][] = $this->title;
 								'deleteOptions'=>['title'=>'Eliminar Documento', 'data-toggle'=>'tooltip'],
 								'headerOptions'=>['class'=>'kartik-sheet-style'],
 								//'template'=>'{view}{update}{delete}{cambiarPaso}',
-								'template'=>'{cambiarPaso} {delete}',
+								//'template'=>'{cambiarPaso} {delete} {pasoSiguiente}',
+								'template'=>'{pasoSiguiente} {delete}',
 								'buttons'=>[
 												'delete' => function ($url, $model) {
 																  //return Html::a('<span class="glyphicon glyphicon-trash"></span>', $url,
@@ -277,6 +278,48 @@ $this->params['breadcrumbs'][] = $this->title;
 													
 																	
 															 },
+												 'pasoSiguiente' => function($url, $model){
+													 $acciones = TIPODOCUMENTOPASOS::pasoSiguiente($model->ID_MOVIMIENTO);
+													 
+													 $link = [];
+													 foreach($acciones as $accion){
+														 switch($accion){
+															 case 'ver':
+																$link[] = Html::a('<span class="glyphicon glyphicon-eye-open"></span>',Url::to(['movimiento/view', 'id' => $model->ID_MOVIMIENTO]),['title'=>"Ver Detalle"]);
+																break;
+															 case 'enviar':
+																$link[] = Html::a('<span class="fa fa-thumbs-o-up"></span>',Url::to(['movimiento/enviar', 'id' => $model->ID_MOVIMIENTO]),
+																		   [
+																				'title'=>"Aprobar y Enviar",
+																				'id' => 'enviarDoc',
+																				'data-method' => 'post'
+																		   ]);
+																break;
+															 case 'recibir':
+																$link[] = Html::a('<span class="fa fa-download"></span>',Url::to(['movimiento/recibido', 'id' => $model->ID_MOVIMIENTO]),
+																	[
+																		'title'=>"Recibir Documento",
+																		//'target'=>'_blank',
+																		'id' => 'recibirDoc',
+																		'data-method' => 'post'
+																	]);
+																break;
+															 case 'devolver':
+																$link[] = Html::a('<span class="fa fa-thumbs-o-down"></span>',Url::to(['movimiento/devolver', 'id' => $model->ID_MOVIMIENTO]),
+																		   [
+																				'title'=>"Rechazar y Devolver",
+																				'id' => 'devolverDoc',
+																				'data-method' => 'post'
+																		   ]);
+																break;
+															 case 'modificar':
+																$link[] = Html::a('<span class="glyphicon glyphicon-pencil"></span>',Url::to(['documento/modificar', 'id' => $model->ID_DOCUMENTO, 'movimiento'=>$model->ID_MOVIMIENTO]),['title'=>"Modificar"]);
+																break;
+														}
+													 }
+													 
+													 return implode(" ",$link);
+												},
 										   ],
 							],
 							[

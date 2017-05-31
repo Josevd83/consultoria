@@ -155,4 +155,50 @@ class TIPODOCUMENTOPASOS extends \yii\db\ActiveRecord
 		
 		return $numeroDeAcciones;	
 	}
+	
+	public static function pasoSiguiente($id_movimiento){
+		
+		$modelMovimiento = MOVIMIENTO::findOne($id_movimiento);
+		
+		$estatus = $modelMovimiento->ID_ESTATUS;
+		$idTipoDocumento = $modelMovimiento->ID_TIPO_DOCUMENTO;
+		$idDepartamento = $modelMovimiento->ID_DEPARTAMENTO;
+		$idPaso = $modelMovimiento->ID_PASO;
+		
+		$modelTipoDocumentoPasos = TIPODOCUMENTOPASOS::findOne($modelMovimiento->ID_PASO);
+		
+		//var_dump($modelTipoDocumentoPasos);
+			
+		$acciones = [];
+		
+		if($estatus==3){ //Registrado
+			$acciones[] = 'ver';
+			$acciones[] = 'enviar';
+		}
+		
+		if($estatus==6){ //Enviado
+			$acciones[] = 'recibir';
+		}
+		
+		if($estatus==4){ //Recibido
+			$acciones[] = 'ver';
+			$acciones[] = 'enviar';
+			if($modelTipoDocumentoPasos->PASO_DEVUELTO!=null){
+				$acciones[] = 'devolver';
+			}
+			if($idTipoDocumento==4 && $idDepartamento==4){ //visto bueno && consultoria
+				$acciones[] = 'modificar';
+			}
+		}
+		
+		if($estatus==5){ //Devuelto
+			$acciones[] = 'devolver';
+		}
+		
+		if($estatus==7){ //Entregado
+			$acciones[] = 'ver';
+		}
+		
+		return $acciones;
+	}
 }
