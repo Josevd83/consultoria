@@ -9,26 +9,62 @@ use yii2mod\user\models\enums\UserStatus;
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
-<div class="user-form">
+<?php
+$fieldOptions1 = [
+    'options' => ['class' => 'form-group has-feedback'],
+    'inputTemplate' => "{input}<span class='glyphicon glyphicon-envelope form-control-feedback'></span>"
+];
 
-    <?php $form = ActiveForm::begin(['id' => 'create-user-form']); ?>
+$fieldOptions2 = [
+    'options' => ['class' => 'form-group has-feedback'],
+    'inputTemplate' => "{input}<span class='glyphicon glyphicon-lock form-control-feedback'></span>"
+];
+?>
+?>
 
-    <div class="row">
-        <div class="col-md-6">
-            <?php echo $form->field($model, 'username')->textInput(['maxlength' => 255]) ?>
+<div class="login-box">
+  <div class="login-logo">
+    <a href="../../index2.html"><b>Consultoria</b>BANAIVIH</a>
+  </div>
+  <!-- /.login-logo -->
+  <div class="login-box-body">
+    <p class="login-box-msg">Inicio de Sesión</p>
 
-            <?php echo $form->field($model, 'email')->textInput(['maxlength' => 255]) ?>
-
-            <?php echo $form->field($model, 'status')->dropDownList(UserStatus::listData()); ?>
-
-            <?php echo $form->field($model, 'plainPassword')->passwordInput(['autocomplete' => 'off']); ?>
+    <?php $form = ActiveForm::begin(['id' => 'login-form', 'enableClientValidation' => false]); ?>
+      <div class="form-group has-feedback">
+		<?= $form
+            ->field($model, 'username', $fieldOptions1)
+            ->label(false)
+            ->textInput(['placeholder' => $model->getAttributeLabel('username')]) ?>
+        <!--<input type="email" class="form-control" placeholder="Email">-->
+        <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+      </div>
+      <div class="form-group has-feedback">
+		  <?= $form
+            ->field($model, 'plainPassword', $fieldOptions2)
+            ->label(false)
+            ->passwordInput(['placeholder' => $model->getAttributeLabel('password')]) ?>
+        <!--<input type="password" class="form-control" placeholder="Password">-->
+        <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+      </div>
+      <div class="row">
+        <div class="col-xs-8">
+          <div class="checkbox icheck">
+            <label>
+				<?= $form->field($model, 'rememberMe')->checkbox() ?>
+              <!--<input type="checkbox"> Remember Me-->
+            </label>
+          </div>
         </div>
-    </div>
-
-    <div class="form-group">
-        <?php echo Html::submitButton($model->isNewRecord ? Yii::t('app', 'Create') : Yii::t('app', 'Update'), ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
-    </div>
-
+        <!-- /.col -->
+        <div class="col-xs-4">
+			<?= Html::submitButton('Ingresar', ['class' => 'btn btn-primary btn-block btn-flat', 'name' => 'login-button']) ?>
+          <!--<button type="submit" class="btn btn-primary btn-block btn-flat">Sign In</button>-->
+        </div>
+        <!-- /.col -->
+      </div>
     <?php ActiveForm::end(); ?>
-
+  </div>
+  <!-- /.login-box-body -->
 </div>
+<!-- /.login-box -->

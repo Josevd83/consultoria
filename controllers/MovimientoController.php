@@ -137,6 +137,13 @@ class MovimientoController extends Controller
 		$modelMovimiento = MOVIMIENTO::findOne($id);
 		//var_dump($modelMovimiento->NRO_PASO);die;
 		$modelTipodocumentoPasosProximo = TIPODOCUMENTOPASOS::findOne(['ID_TIPO_DOCUMENTO'=>$modelMovimiento->ID_TIPO_DOCUMENTO,'NRO_PASO'=>($modelMovimiento->NRO_PASO+1)]);
+		
+		//se valida que ya no exista registrado el documento para que no haya duplicidad de registros
+		$validaDocumento = MOVIMIENTO::findOne(['ID_DOCUMENTO'=>$modelMovimiento->ID_DOCUMENTO,'NRO_PASO'=>($modelMovimiento->NRO_PASO+1)]);
+		if($validaDocumento){
+			return ;
+		}
+		
 		$modelNewMovimiento = new MOVIMIENTO;
 		
 		switch ($modelMovimiento->ID_ESTATUS){
@@ -244,5 +251,40 @@ class MovimientoController extends Controller
 		
 		
 		//var_dump($modelTipodocumentoPasos);die;
+	}
+	
+	public function actionDevolver($id){
+		$modelMovimiento = MOVIMIENTO::findOne($id);
+		$modelTipoDocumentoPasos = TIPODOCUMENTOPASOS::findOne($modelMovimiento->ID_PASO);
+		
+		Yii::$app->response->format = Response::FORMAT_JSON;
+		
+		if($modelTipoDocumentoPasos->PASO_DEVUELTO==null){
+			$data = 0;
+		}else{
+			$modelNewMovimiento = new MOVIMIENTO;
+			$modelTipodocumentoPasosProximo = TIPODOCUMENTOPASOS::findOne(['NRO_PASO'=>$modelTipoDocumentoPasos->PASO_DEVUELTO,'ID_TIPO_DOCUMENTO'=>$modelMovimiento->ID_TIPO_DOCUMENTO]);
+			
+			$modelNewMovimiento->ID_MOVIMIENTO = $modelMovimiento->getNextVal();
+			$modelNewMovimiento->ID_DOCUMENTO = $modelMovimiento->ID_DOCUMENTO;
+			$modelNewMovimiento->ID_ESTATUS = $modelTipodocumentoPasosProximo->ID_ESTATUS;
+			$modelNewMovimiento->ID_DEPARTAMENTO = $modelTipodocumentoPasosProximo->ID_DEPARTAMENTO;
+			$modelNewMovimiento->ID_USUARIO = 1; //modificar
+			$modelNewMovimiento->ID_SOLICITANTE = $modelMovimiento->ID_SOLICITANTE;
+			$modelNewMovimiento->ID_TIPO_MOVIMIENTO = $modelTipodocumentoPasosProximo->ID_TIPO_MOVIMIENTO;
+			$modelNewMovimiento->ID_TIPO_DOCUMENTO = $modelTipodocumentoPasosProximo->ID_TIPO_DOCUMENTO;
+			$modelNewMovimiento->ID_PASO = $modelTipodocumentoPasosProximo->ID_PASO;
+			$modelNewMovimiento->NRO_PASO = $modelTipodocumentoPasosProximo->NRO_PASO;
+			$modelNewMovimiento->DESCRIPCION_PASO = $modelTipodocumentoPasosProximo->DESCRIPCION_PASO;
+			$modelNewMovimiento->OBSERVACIONES = 'Documento devuelto';
+			$modelNewMovimiento->FECHA_CREACION = new Expression('SYSDATE');
+			
+			if($modelNewMovimiento->save(false)){
+				$data = 1;
+			}
+		}
+		
+		return $data;
+		
 	}
 }

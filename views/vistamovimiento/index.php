@@ -263,7 +263,12 @@ $this->params['breadcrumbs'][] = $this->title;
 																				'id' => 'enviarDoc',
 																				'data-method' => 'post'
 																			])." ".
-																		   Html::a('<span class="fa fa-thumbs-o-down"></span>',Url::to(['movimiento/devolver', 'id' => $model->ID_MOVIMIENTO]),['title'=>"Rechazar y Devolver"])." ".
+																		   Html::a('<span class="fa fa-thumbs-o-down"></span>',Url::to(['movimiento/devolver', 'id' => $model->ID_MOVIMIENTO]),
+																		   [
+																				'title'=>"Rechazar y Devolver",
+																				'id' => 'devolverDoc',
+																				'data-method' => 'post'
+																		   ])." ".
 																		   Html::a('<span class="glyphicon glyphicon-pencil"></span>',Url::to(['documento/modificar', 'id' => $model->ID_DOCUMENTO, 'movimiento'=>$model->ID_MOVIMIENTO]),['title'=>"Modificar"]);
 																break;
 																default:
@@ -415,6 +420,71 @@ $this->registerJsFile(
 									}]
 								});
 								dialog.open();
+					
+							}
+                        }).done(function (data) {
+
+                        });	
+			return false;
+    });
+    
+    $('body').on('click', '#devolverDoc', function(e) {
+       var url = $(this).attr('href') ,row = $(this).closest('tr'), cell = $(this).closest('td');
+		$.ajax({
+							url: url,
+                            type: 'post',
+                            //dataType: 'text',
+                            beforeSend: function() {
+                                row.addClass('kv-delete-row');
+                                cell.addClass('kv-delete-cell');
+                            },
+                            complete: function () {
+                                row.removeClass('kv-delete-row');
+                                cell.removeClass('kv-delete-cell');
+                            },
+                            error: function (xhr, status, error) {
+                                //krajeeDialog.alert('There was an error with your request.' + xhr.responseText);
+                                krajeeDialog.alert('Hubo un error');
+                            },
+                            success: function(data){
+								if(data == 0){
+									var dialog = new BootstrapDialog({
+									message: 'Solicitud Inválida.',
+									type: BootstrapDialog.TYPE_INFO,
+									title: 'Información',
+									closable: false,
+									buttons: [
+									{
+										id: 'btn-1',
+										label: 'Cerrar',
+										action: function(dialogItself){
+											dialogItself.close();
+											//$.pjax.reload({container: '#kv-grid-demo-pjax'});
+										}
+									}]
+								});
+								dialog.open();
+								}else{
+										if(data == 1){
+											var dialog = new BootstrapDialog({
+												message: 'Documento ha sido devuelto.',
+												type: BootstrapDialog.TYPE_INFO,
+												title: 'Información',
+												closable: false,
+												buttons: [
+												{
+													id: 'btn-1',
+													label: 'Cerrar',
+													action: function(dialogItself){
+														dialogItself.close();
+														$.pjax.reload({container: '#kv-grid-demo-pjax'});
+													}
+												}]
+											});
+											dialog.open();
+										}
+								}
+								
 					
 							}
                         }).done(function (data) {

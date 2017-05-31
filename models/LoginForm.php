@@ -15,7 +15,8 @@ class LoginForm extends Model
 {
     public $username;
     public $password;
-    public $rememberMe = true;
+    public $rememberMe = false;
+    //public $rememberMe = true;
 
     private $_user = false;
 
@@ -34,6 +35,12 @@ class LoginForm extends Model
             ['password', 'validatePassword'],
         ];
     }
+    
+    public function attributeLabels(){
+		return [
+			'rememberMe'=>'No cerrar sesión'
+		];
+	}
 
     /**
      * Validates the password.
@@ -48,7 +55,7 @@ class LoginForm extends Model
             $user = $this->getUser();
 
             if (!$user || !$user->validatePassword($this->password)) {
-                $this->addError($attribute, 'Incorrect username or password.');
+                $this->addError($attribute, 'Usuario o clave incorrecta.');
             }
         }
     }
